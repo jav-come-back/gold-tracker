@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XAU/USD Gold Market Tracker & Trading Terminal</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter, Noto Sans Khmer & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Khmer', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            terminal: {
+              bg: '#0B0E14',
+              card: '#131722',
+              border: '#2A2E39',
+              hover: '#1E222D',
+              gold: '#F59E0B',
+              goldHover: '#D97706',
+              bull: '#089981',
+              bear: '#F23645',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar for sleek institutional terminal feel */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0E14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2A2E39;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3E4454;
+    }
+    body {
+      background-color: #0B0E14;
+      color: #D1D4DC;
+      overflow-x: hidden;
+      font-family: 'Inter', 'Noto Sans Khmer', sans-serif;
+    }
+    html[lang="km"] body {
+      line-height: 1.65;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500 selection:text-black">
+
+  <!-- Top Navigation & Quick Actions -->
+  <header class="bg-[#131722] border-b border-[#2A2E39] sticky top-0 z-30">
+    <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold shadow-lg shadow-amber-500/20 shrink-0">
+          <i class="fa-solid fa-coins text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-white font-bold text-base sm:text-lg tracking-tight">AUREUS <span class="text-amber-500">TERMINAL</span></h1>
+            <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> <span data-i18n="liveFeed">LIVE FEED</span>
+            </span>
+          </div>
+          <p class="text-[11px] text-gray-400 hidden sm:block" data-i18n="brandSubtitle">XAU/USD Institutional Market Analytics & Risk Suite</p>
+        </div>
+      </div>
+
+      <!-- Center Live Ticker Quick Stats -->
+      <div class="flex items-center gap-3 sm:gap-5 bg-[#0B0E14] px-3 py-1.5 rounded-xl border border-[#2A2E39]">
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold" data-i18n="spotGold">XAU / USD Spot</div>
+          <div class="flex items-baseline gap-2">
+            <span id="headerPrice" class="font-mono text-base sm:text-xl font-bold text-white tabular-nums">3,771.46</span>
+            <span id="headerChange" class="font-mono text-xs font-semibold text-[#F23645] tabular-nums">-77.47 (-2.01%)</span>
+          </div>
+        </div>
+        <div class="hidden md:block h-7 w-[1px] bg-[#2A2E39]"></div>
+        <div class="hidden md:block">
+          <div class="text-[10px] uppercase tracking-wider text-gray-400" data-i18n="highLow24h">24h High / Low</div>
+          <div class="font-mono text-xs text-gray-200 tabular-nums">
+            <span id="headerHigh" class="text-emerald-400">3,849.20</span> / <span id="headerLow" class="text-rose-400">3,768.90</span>
+          </div>
+        </div>
+        <div class="hidden lg:block h-7 w-[1px] bg-[#2A2E39]"></div>
+        <div class="hidden lg:flex items-center gap-2">
+          <div>
+            <div class="text-[10px] uppercase tracking-wider text-gray-400" data-i18n="aiMarketBias">AI Market Bias</div>
+            <span id="sentimentBadge" class="inline-block mt-0.5 px-2 py-0.5 rounded text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+              BEARISH PRESSURE
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Actions: Language Switcher, Day Analyst Jump, Telegram, Pause, GitHub -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <!-- Bilingual Switcher (EN | ខ្មែរ) -->
+        <div class="flex items-center bg-[#0B0E14] p-0.5 rounded-lg border border-[#2A2E39]" role="group" aria-label="Language Switcher">
+          <button id="langBtnEn" onclick="setLanguage('en')" class="px-2.5 py-1.5 rounded-md text-xs font-bold bg-amber-500 text-black transition">
+            EN
+          </button>
+          <button id="langBtnKm" onclick="setLanguage('km')" class="px-2.5 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white transition">
+            ខ្មែរ
+          </button>
+        </div>
+
+        <!-- Quick Jump to Day Analyst -->
+        <button onclick="scrollToDayAnalyst()" class="px-2.5 sm:px-3 py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold border border-emerald-500/30 transition flex items-center gap-1.5" title="Buy Today vs Which Day Analyst">
+          <i class="fa-solid fa-calendar-check text-sm"></i>
+          <span class="hidden md:inline" data-i18n="navDayAnalyst">Day Analyst</span>
+        </button>
+
+        <!-- Telegram Quick Jump -->
+        <button onclick="scrollToTelegram()" class="px-2.5 sm:px-3 py-2 rounded-lg bg-[#0088cc]/15 hover:bg-[#0088cc]/25 text-[#38bdf8] text-xs font-semibold border border-[#0088cc]/30 transition flex items-center gap-1.5" title="Configure Telegram Bot Alerts">
+          <i class="fa-brands fa-telegram text-sm"></i>
+          <span id="headerTgStatus" class="hidden xl:inline" data-i18n="navTelegram">Telegram Bot</span>
+        </button>
+
+        <!-- Pause / Resume Feed -->
+        <button id="toggleFeedBtn" onclick="toggleSimulation()" class="px-2.5 sm:px-3 py-2 rounded-lg bg-[#1E222D] hover:bg-[#2A2E39] text-gray-200 text-xs font-medium border border-[#2A2E39] transition flex items-center gap-1.5" title="Pause or Resume Live Market Feed">
+          <i id="feedIcon" class="fa-solid fa-pause text-amber-500"></i>
+          <span id="feedText" class="hidden xl:inline" data-i18n="pauseFeed">Pause Feed</span>
+        </button>
+
+        <!-- GitHub Pages Modal -->
+        <button onclick="openDeployModal()" class="px-2.5 sm:px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/10">
+          <i class="fa-brands fa-github text-sm"></i>
+          <span class="hidden sm:inline" data-i18n="githubReady">GitHub Pages</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Grid -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+    <!-- Left & Center Column (8 cols on desktop) -->
+    <div class="lg:col-span-8 flex flex-col gap-4">
+
+      <!-- 1. Interactive Candlestick & Line Chart Card -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] flex flex-col overflow-hidden shadow-xl">
+        <!-- Chart Toolbar -->
+        <div class="px-3 sm:px-4 py-2.5 border-b border-[#2A2E39] flex flex-wrap items-center justify-between gap-2 bg-[#161B26]">
+          <!-- Timeframe Switcher -->
+          <div class="flex items-center gap-1 bg-[#0B0E14] p-1 rounded-lg border border-[#2A2E39]">
+            <button onclick="setTimeframe('1m')" data-tf="1m" class="tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold text-gray-400 hover:text-white transition">1m</button>
+            <button onclick="setTimeframe('15m')" data-tf="15m" class="tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold text-gray-400 hover:text-white transition">15m</button>
+            <button onclick="setTimeframe('1H')" data-tf="1H" class="tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold text-gray-400 hover:text-white transition">1H</button>
+            <button onclick="setTimeframe('1D')" data-tf="1D" class="tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold bg-amber-500 text-black transition">1D</button>
+            <button onclick="setTimeframe('1W')" data-tf="1W" class="tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold text-gray-400 hover:text-white transition">1W</button>
+          </div>
+
+          <!-- Chart Type & Indicators -->
+          <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <!-- Candle vs Line -->
+            <div class="flex items-center bg-[#0B0E14] p-1 rounded-lg border border-[#2A2E39]">
+              <button onclick="setChartType('candle')" id="btnCandle" class="px-2.5 py-1 rounded text-xs font-medium bg-[#2A2E39] text-amber-400 transition">
+                <i class="fa-solid fa-chart-column"></i> <span data-i18n="chartCandles">Candles</span>
+              </button>
+              <button onclick="setChartType('line')" id="btnLine" class="px-2.5 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-chart-line"></i> <span data-i18n="chartLine">Line</span>
+              </button>
+            </div>
+
+            <!-- Technical Indicators Toggle -->
+            <button onclick="toggleIndicator('sma20')" id="ind-sma20" class="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium border border-sky-500/40 bg-sky-500/15 text-sky-400 transition">
+              SMA 20
+            </button>
+            <button onclick="toggleIndicator('ema50')" id="ind-ema50" class="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium border border-purple-500/40 bg-purple-500/15 text-purple-400 transition">
+              EMA 50
+            </button>
+            <button onclick="toggleIndicator('sr')" id="ind-sr" class="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium border border-amber-500/40 bg-amber-500/15 text-amber-400 transition" data-i18n="srLevelsBtn">
+              S/R Levels
+            </button>
+          </div>
+        </div>
+
+        <!-- OHLC Legend Bar -->
+        <div class="px-4 py-1.5 border-b border-[#2A2E39]/60 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono bg-[#131722]">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="font-bold text-white"><span data-i18n="chartLegendGold">GOLD</span> · <span id="legendTf">1D</span> · SPOT</span>
+            <span class="text-gray-400">O <span id="ohlcO" class="text-gray-200">3,848.90</span></span>
+            <span class="text-gray-400">H <span id="ohlcH" class="text-emerald-400">3,852.10</span></span>
+            <span class="text-gray-400">L <span id="ohlcL" class="text-rose-400">3,768.90</span></span>
+            <span class="text-gray-400">C <span id="ohlcC" class="text-white font-semibold">3,771.46</span></span>
+          </div>
+          <div class="flex items-center gap-3 text-[11px]">
+            <span class="flex items-center gap-1 text-sky-400"><span class="w-2 h-0.5 bg-sky-400 inline-block"></span> SMA20</span>
+            <span class="flex items-center gap-1 text-purple-400"><span class="w-2 h-0.5 bg-purple-400 inline-block"></span> EMA50</span>
+          </div>
+        </div>
+
+        <!-- Responsive HTML5 Canvas Chart Container -->
+        <div id="chartContainer" class="relative w-full h-[330px] sm:h-[400px] bg-[#0F131C] cursor-crosshair select-none">
+          <canvas id="goldChart"></canvas>
+          <!-- Crosshair Tooltip -->
+          <div id="chartTooltip" class="pointer-events-none hidden absolute top-3 left-3 bg-[#131722]/95 border border-[#2A2E39] rounded-lg px-3 py-2 text-xs font-mono shadow-xl backdrop-blur-sm z-10">
+            <div id="ttDate" class="text-gray-400 text-[10px] mb-1">2026-11-19</div>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-0.5">
+              <span class="text-gray-400" data-i18n="ttOpen">Open:</span><span id="ttO" class="text-right text-white">0.00</span>
+              <span class="text-gray-400" data-i18n="ttHigh">High:</span><span id="ttH" class="text-right text-emerald-400">0.00</span>
+              <span class="text-gray-400" data-i18n="ttLow">Low:</span><span id="ttL" class="text-right text-rose-400">0.00</span>
+              <span class="text-gray-400" data-i18n="ttClose">Close:</span><span id="ttC" class="text-right text-amber-400 font-bold">0.00</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. NEW FEATURE: Buy Today vs. Which Day Analyst ("តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?") -->
+      <section id="dayAnalystSection" class="bg-[#131722] rounded-xl border border-amber-500/40 p-4 sm:p-5 shadow-xl relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#2A2E39]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500/20 to-emerald-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+              <i class="fa-solid fa-calendar-day text-base"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-white font-bold text-sm sm:text-base" data-i18n="dayAnalystTitle">Buy Today vs. Best Day Analyst</h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30" data-i18n="dayAnalystBadge">SMART ENTRY PLANNER</span>
+              </div>
+              <p class="text-xs text-gray-400" data-i18n="dayAnalystSubtitle">Should we buy Gold TODAY, or WHICH DAY of the week gives the highest-probability entry?</p>
+            </div>
+          </div>
+
+          <button onclick="sendDayAnalystToTelegram()" class="px-3.5 py-2 rounded-lg bg-[#0088cc] hover:bg-[#0077b5] text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-[#0088cc]/20">
+            <i class="fa-brands fa-telegram text-sm"></i>
+            <span data-i18n="sendDayAnalystTg">Send Day Analyst to Telegram</span>
+          </button>
+        </div>
+
+        <!-- Top Comparison Row: TODAY vs OPTIMAL TARGET DAY -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+          <!-- Left: Today's Verdict Card -->
+          <div class="md:col-span-6 bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold" data-i18n="todayStatusLabel">TODAY'S ENTRY EVALUATION</span>
+                <span id="analystTodayName" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-mono text-xs font-bold">THURSDAY</span>
+              </div>
+
+              <div id="analystTodayVerdictBadge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 mb-2.5">
+                <i class="fa-solid fa-clock"></i>
+                <span>WAIT — DO NOT BUY TODAY</span>
+              </div>
+
+              <p id="analystTodayExplanation" class="text-xs text-gray-300 leading-relaxed">
+                Even though Thursday offers strong institutional liquidity, XAU/USD is currently below SMA 20 with daily bearish pressure. Wait for a confirmed bounce or next Tuesday's setup.
+              </p>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-[#2A2E39] flex items-center justify-between text-xs">
+              <span class="text-gray-400" data-i18n="todaySetupScore">Today's Buy Readiness Score:</span>
+              <span id="analystTodayScore" class="font-mono font-bold text-amber-400">42 / 100</span>
+            </div>
+          </div>
+
+          <!-- Right: Recommended "Which Day?" Target Card -->
+          <div class="md:col-span-6 bg-gradient-to-br from-[#0B0E14] to-[#111c24] rounded-xl border border-emerald-500/35 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] uppercase tracking-wider text-emerald-400 font-semibold" data-i18n="whichDayLabel">WHICH DAY SHOULD WE BUY?</span>
+                <span class="text-[11px] font-mono text-gray-400" data-i18n="primeWindowShort">12:00–16:00 UTC</span>
+              </div>
+
+              <div class="flex items-baseline gap-2.5 mb-2">
+                <span id="analystBestDayTitle" class="text-lg sm:text-xl font-bold text-white">Tuesday / Wednesday</span>
+                <span id="analystBestDayTag" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  HIGHEST WIN RATE
+                </span>
+              </div>
+
+              <p id="analystWhichDayReason" class="text-xs text-gray-300 leading-relaxed">
+                Institutional trend reversals and clean breakouts historically peak mid-week (Tuesday–Thursday) during the London–NY Overlap once Monday's false moves settle.
+              </p>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-[#2A2E39] grid grid-cols-2 gap-2 text-xs font-mono">
+              <div>
+                <span class="text-gray-400 font-sans block text-[10px]" data-i18n="targetBuyZone">Target Buy Zone:</span>
+                <span id="analystTargetZone" class="text-emerald-400 font-bold">$3,750 – $3,760</span>
+              </div>
+              <div class="text-right">
+                <span class="text-gray-400 font-sans block text-[10px]" data-i18n="confirmationTrigger">Confirmation Trigger:</span>
+                <span id="analystTrigger" class="text-amber-400 font-bold">1H Close &gt; SMA20</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Day-by-Day Inspector Bar -->
+        <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-magnifying-glass-chart text-amber-400"></i>
+              <span data-i18n="inspectDayPrompt">Select any day below to inspect Analyst Strategy & Entry Plan:</span>
+            </span>
+            <span class="text-[11px] text-gray-400" data-i18n="clickDayHint">Click a day tab to compare</span>
+          </div>
+
+          <!-- Day Selector Tabs -->
+          <div class="grid grid-cols-5 gap-1.5 sm:gap-2 mb-3" id="dayAnalystTabs">
+            <!-- Populated dynamically by renderDayAnalyst() -->
+          </div>
+
+          <!-- Selected Day Deep-Dive Detail Box -->
+          <div id="selectedDayDetailBox" class="bg-[#131722] rounded-lg border border-[#2A2E39] p-3 text-xs">
+            <!-- Populated dynamically by renderDayAnalyst() -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. AI Risk & Buy/Wait Decision Engine -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] p-4 sm:p-5 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-[#2A2E39]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <h2 class="text-white font-bold text-sm sm:text-base" data-i18n="aiEngineTitle">AI Risk &amp; Buy/Wait Decision Engine</h2>
+              <p class="text-xs text-gray-400" data-i18n="aiEngineSubtitle">Real-time trend, RSI momentum &amp; volatility evaluation — Should you buy Gold now?</p>
+            </div>
+          </div>
+          <button onclick="sendSignalReportToTelegram(false)" class="px-3.5 py-2 rounded-lg bg-[#0088cc] hover:bg-[#0077b5] text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-[#0088cc]/20">
+            <i class="fa-brands fa-telegram text-sm"></i>
+            <span data-i18n="sendSignalTg">Send Signal &amp; Risk Report to Telegram</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+          <!-- Main Verdict Box -->
+          <div class="md:col-span-5 bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-4 flex flex-col justify-between">
+            <div>
+              <div class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1.5" data-i18n="currentActionVerdict">Current Action Verdict</div>
+              <div id="aiVerdictBadge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                <i class="fa-solid fa-hand"></i>
+                <span>WAIT / DO NOT BUY (High Risk)</span>
+              </div>
+              <p id="aiVerdictReason" class="mt-3 text-xs text-gray-300 leading-relaxed">
+                Price is trading below both SMA 20 and EMA 50 under strong daily bearish pressure. Avoid catching falling knives until a confirmed daily reversal forms near $3,750.
+              </p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-[#2A2E39] flex items-center justify-between text-xs font-mono">
+              <span class="text-gray-400 font-sans" data-i18n="signalConfidence">Signal Confidence:</span>
+              <span id="aiConfidence" class="text-amber-400 font-bold">82%</span>
+            </div>
+          </div>
+
+          <!-- Technical Sub-Metrics -->
+          <div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3 flex flex-col justify-between">
+              <span class="text-[11px] text-gray-400" data-i18n="volatilityRisk">Volatility Risk</span>
+              <div id="aiRiskLevel" class="text-sm sm:text-base font-bold font-mono text-rose-400 my-1">HIGH RISK</div>
+              <span id="aiDrawdownText" class="text-[10px] text-gray-500 font-mono">24h Move: -2.01%</span>
+            </div>
+
+            <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3 flex flex-col justify-between">
+              <span class="text-[11px] text-gray-400" data-i18n="rsiMomentum">RSI (14) Momentum</span>
+              <div id="aiRsiValue" class="text-sm sm:text-base font-bold font-mono text-amber-400 my-1">31.4 (Oversold)</div>
+              <span class="text-[10px] text-gray-500" data-i18n="rsiHint">Below 30 = Bounce Watch</span>
+            </div>
+
+            <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3 flex flex-col justify-between col-span-2 sm:col-span-1">
+              <span class="text-[11px] text-gray-400" data-i18n="maTrendAlign">MA Trend Alignment</span>
+              <div id="aiMaAlignment" class="text-sm sm:text-base font-bold font-mono text-rose-400 my-1">BEARISH</div>
+              <span id="aiMaDetail" class="text-[10px] text-gray-500 font-mono">Price &lt; SMA20 &amp; EMA50</span>
+            </div>
+
+            <!-- Actionable Rule Banner -->
+            <div class="col-span-2 sm:col-span-3 bg-[#161B26] border border-[#2A2E39] rounded-xl p-3 flex items-center justify-between gap-3">
+              <div class="flex items-start gap-2.5">
+                <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5 text-sm"></i>
+                <div class="text-xs text-gray-300 leading-relaxed" id="aiEntryRuleText">
+                  <strong class="text-white">Entry Rule:</strong> Only enter a <span class="text-emerald-400 font-semibold">BUY</span> position when price reclaims <span class="font-mono text-amber-400">SMA 20</span> during the <span class="text-amber-400 font-semibold">London–NY Overlap (12:00–16:00 UTC)</span> on <span class="text-emerald-400 font-semibold">Tue–Thu</span>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Entry & Risk Management Calculator -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] p-4 sm:p-5 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-[#2A2E39]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div>
+              <h2 class="text-white font-bold text-sm sm:text-base" data-i18n="calcTitle">XAU/USD Position &amp; Risk Calculator</h2>
+              <p class="text-xs text-gray-400" data-i18n="calcSubtitle">Calculate optimal Gold Lot Size (1 Std Lot = 100 oz) &amp; Setup Signal</p>
+            </div>
+          </div>
+          <button onclick="fillCurrentPrice()" class="px-3 py-1.5 rounded-lg bg-[#1E222D] hover:bg-[#2A2E39] text-amber-400 text-xs font-medium border border-[#2A2E39] transition">
+            <i class="fa-solid fa-crosshairs mr-1"></i> <span data-i18n="useLivePrice">Use Live Price</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+          <!-- Inputs -->
+          <div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelBalance">Account Balance (USD)</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-gray-500 font-mono text-sm">$</span>
+                <input type="number" id="calcBalance" value="5000" min="10" step="100" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg pl-7 pr-3 py-2 text-sm font-mono text-white outline-none transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelRiskPct">Risk Per Trade (%)</label>
+              <div class="relative">
+                <input type="number" id="calcRiskPct" value="1.5" min="0.1" max="100" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-sm font-mono text-white outline-none transition">
+                <span class="absolute right-3 top-2.5 text-gray-500 font-mono text-sm">%</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelEntry">Entry Price (XAU/USD)</label>
+              <input type="number" id="calcEntry" value="3771.50" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-sm font-mono text-white outline-none transition">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelSL">Stop Loss Price</label>
+              <input type="number" id="calcSL" value="3755.00" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-rose-500 rounded-lg px-3 py-2 text-sm font-mono text-rose-400 outline-none transition">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelTP">Take Profit Target</label>
+              <input type="number" id="calcTP" value="3815.00" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-emerald-500 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 outline-none transition">
+            </div>
+          </div>
+
+          <!-- Calculation Results Box -->
+          <div class="md:col-span-5 bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs text-gray-400 uppercase font-semibold tracking-wider" data-i18n="setupVerdict">Setup Verdict</span>
+                <span id="calcSignalBadge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                  VALID LONG (1:2.64)
+                </span>
+              </div>
+
+              <div class="space-y-2.5 font-mono text-sm">
+                <div class="flex justify-between items-center py-1.5 border-b border-[#2A2E39]/60">
+                  <span class="text-gray-400 text-xs font-sans" data-i18n="recLotSize">Recommended Lot Size:</span>
+                  <span id="resLots" class="text-amber-400 font-bold text-base">0.05 Lots</span>
+                </div>
+                <div class="flex justify-between items-center py-1.5 border-b border-[#2A2E39]/60">
+                  <span class="text-gray-400 text-xs font-sans" data-i18n="capAtRisk">Capital at Risk:</span>
+                  <span id="resRiskUsd" class="text-rose-400 font-semibold">-$75.00</span>
+                </div>
+                <div class="flex justify-between items-center py-1.5 border-b border-[#2A2E39]/60">
+                  <span class="text-gray-400 text-xs font-sans" data-i18n="potProfit">Potential Profit:</span>
+                  <span id="resRewardUsd" class="text-emerald-400 font-semibold">+$197.73</span>
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                  <span class="text-gray-400 text-xs font-sans" data-i18n="rrRatio">Reward / Risk Ratio:</span>
+                  <span id="resRR" class="text-white font-bold">1 : 2.64</span>
+                </div>
+              </div>
+            </div>
+
+            <p id="calcAdvice" class="mt-3 text-[11px] text-gray-400 leading-relaxed bg-[#131722] p-2.5 rounded-lg border border-[#2A2E39]">
+              Favorable R:R ratio (&ge; 1:2.0). Wait for bullish candle confirmation near support before executing.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Best Day & Time to Join Market (Session & Day-of-Week Timing Advisor) -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] p-4 sm:p-5 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#2A2E39]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <i class="fa-regular fa-clock"></i>
+            </div>
+            <div>
+              <h2 class="text-white font-bold text-sm sm:text-base" data-i18n="timingTitle">Best Day &amp; Time to Join Market (XAU/USD Timing Advisor)</h2>
+              <p class="text-xs text-gray-400" data-i18n="timingSubtitle">Institutional liquidity windows &amp; weekly probability schedule</p>
+            </div>
+          </div>
+
+          <!-- Live UTC & Local Clock + Prime Countdown -->
+          <div class="flex flex-wrap items-center gap-2.5 bg-[#0B0E14] px-3 py-1.5 rounded-xl border border-[#2A2E39] font-mono text-xs">
+            <div>
+              <span class="text-gray-500 text-[10px] block" data-i18n="utcClockLabel">UTC CLOCK</span>
+              <span id="utcClock" class="text-white font-bold">00:00:00 UTC</span>
+            </div>
+            <div class="h-6 w-[1px] bg-[#2A2E39]"></div>
+            <div>
+              <span class="text-gray-500 text-[10px] block" data-i18n="localTimeLabel">LOCAL TIME</span>
+              <span id="localClock" class="text-amber-400 font-bold">00:00:00</span>
+            </div>
+            <div class="h-6 w-[1px] bg-[#2A2E39]"></div>
+            <div>
+              <span class="text-gray-500 text-[10px] block" data-i18n="primeOverlapLabel">PRIME OVERLAP</span>
+              <span id="overlapCountdown" class="text-emerald-400 font-bold">Checking...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trading Sessions Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4" id="sessionCardsContainer">
+          <!-- Populated dynamically by updateSessionClock() -->
+        </div>
+
+        <!-- Best Days of the Week Matrix (Mon - Fri) -->
+        <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-calendar-week text-amber-500"></i> <span data-i18n="weeklyMatrixTitle">Weekly Day-of-Week Probability Matrix</span>
+            </span>
+            <button onclick="sendTimingBriefingToTelegram()" class="px-2.5 py-1 rounded-md bg-[#1E222D] hover:bg-[#2A2E39] text-[#38bdf8] border border-[#0088cc]/30 text-[11px] font-semibold transition flex items-center gap-1.5">
+              <i class="fa-brands fa-telegram"></i> <span data-i18n="sendTimingTg">Send Timing &amp; Risk Briefing</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="weekdayMatrixContainer">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Right Column (4 cols on desktop) -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+
+      <!-- 6. Telegram Bot Configuration & Notification Panel -->
+      <section id="telegramPanel" class="bg-[#131722] rounded-xl border border-[#0088cc]/40 overflow-hidden shadow-xl">
+        <div class="px-4 py-3 border-b border-[#2A2E39] flex items-center justify-between bg-gradient-to-r from-[#161B26] to-[#0f2336]">
+          <div class="flex items-center gap-2">
+            <i class="fa-brands fa-telegram text-[#38bdf8] text-lg"></i>
+            <div>
+              <h2 class="text-white font-bold text-sm" data-i18n="tgPanelTitle">Telegram Bot Alerts</h2>
+              <p class="text-[10px] text-gray-400" data-i18n="tgPanelSubtitle">Direct Bot API · Auto-Saved in Browser</p>
+            </div>
+          </div>
+          <span id="tgConnectionBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            NOT CONFIGURED
+          </span>
+        </div>
+
+        <div class="p-4 space-y-3">
+          <div>
+            <label class="block text-[11px] font-medium text-gray-400 mb-1" data-i18n="tgTokenLabel">Telegram Bot Token (from @BotFather)</label>
+            <input type="password" id="tgBotToken" placeholder="e.g., 7123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-[#38bdf8] rounded-lg px-3 py-2 text-xs font-mono text-white outline-none transition">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-medium text-gray-400 mb-1" data-i18n="tgChatIdLabel">Telegram Chat ID (from @userinfobot)</label>
+            <input type="text" id="tgChatId" placeholder="e.g., 123456789 or -1001234567890" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-[#38bdf8] rounded-lg px-3 py-2 text-xs font-mono text-white outline-none transition">
+          </div>
+
+          <!-- Automation Toggles -->
+          <div class="bg-[#0B0E14] rounded-lg border border-[#2A2E39] p-2.5 space-y-2">
+            <label class="flex items-center justify-between cursor-pointer text-xs text-gray-300">
+              <span data-i18n="tgAutoToggle">Auto-Notify on Signal / Risk Change</span>
+              <input type="checkbox" id="tgAutoSignal" onchange="saveTelegramSettings(true)" class="accent-amber-500 w-4 h-4 rounded cursor-pointer">
+            </label>
+            <label class="flex items-center justify-between cursor-pointer text-xs text-gray-300">
+              <span data-i18n="tgTimingToggle">Include Session &amp; Day Timing Advice</span>
+              <input type="checkbox" id="tgIncludeTiming" checked onchange="saveTelegramSettings(true)" class="accent-amber-500 w-4 h-4 rounded cursor-pointer">
+            </label>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="saveTelegramSettings(false)" class="py-2 px-3 rounded-lg bg-[#1E222D] hover:bg-[#2A2E39] text-white border border-[#2A2E39] text-xs font-semibold transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-floppy-disk text-amber-400"></i> <span data-i18n="saveCredsBtn">Save Credentials</span>
+            </button>
+            <button onclick="sendTestTelegramAlert()" id="btnTestTg" class="py-2 px-3 rounded-lg bg-[#0088cc] hover:bg-[#0077b5] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-[#0088cc]/20">
+              <i class="fa-solid fa-paper-plane"></i> <span data-i18n="sendTestBtn">Send Test Alert</span>
+            </button>
+          </div>
+
+          <!-- Status Footer -->
+          <div class="text-[11px] text-gray-400 flex items-center justify-between pt-1 border-t border-[#2A2E39]/60">
+            <span id="tgLastSent">Last sent: Never</span>
+            <button onclick="toggleTokenVisibility()" class="text-[#38bdf8] hover:underline text-[10px]" data-i18n="showHideToken">Show/Hide Token</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Live Multi-Asset Watchlist Panel -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] overflow-hidden shadow-xl">
+        <div class="px-4 py-3 border-b border-[#2A2E39] flex items-center justify-between bg-[#161B26]">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-amber-500 text-sm"></i>
+            <h2 class="text-white font-bold text-sm" data-i18n="watchlistTitle">Global Commodities &amp; FX Watchlist</h2>
+          </div>
+          <span class="text-[10px] font-mono text-gray-400" data-i18n="realTimeTag">REAL-TIME</span>
+        </div>
+        <div id="watchlistContainer" class="divide-y divide-[#2A2E39]/70">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- 8. Market Structure & Sentiment Summary Card -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-white font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-amber-500"></i> <span data-i18n="techSummaryTitle">Technical Structure Summary</span>
+          </h3>
+          <span class="text-[11px] font-mono text-gray-400">1D / 1H BIAS</span>
+        </div>
+        <div class="space-y-2.5 text-xs">
+          <div class="flex justify-between items-center bg-[#0B0E14] px-3 py-2 rounded-lg border border-[#2A2E39]">
+            <span class="text-gray-400" data-i18n="keyResLabel">Key Resistance (R1)</span>
+            <span class="font-mono font-semibold text-rose-400">3,820.50 USD</span>
+          </div>
+          <div class="flex justify-between items-center bg-[#0B0E14] px-3 py-2 rounded-lg border border-[#2A2E39]">
+            <span class="text-gray-400" data-i18n="majorSupLabel">Major Support (S1)</span>
+            <span class="font-mono font-semibold text-emerald-400">3,750.00 USD</span>
+          </div>
+          <div class="flex justify-between items-center bg-[#0B0E14] px-3 py-2 rounded-lg border border-[#2A2E39]">
+            <span class="text-gray-400" data-i18n="volRangeLabel">24h Volatility Range</span>
+            <span class="font-mono font-semibold text-amber-400">80.30 USD (2.13%)</span>
+          </div>
+        </div>
+        <p class="mt-3 text-[11px] text-gray-400 leading-relaxed" id="analystNoteBox">
+          <strong class="text-gray-200">Analyst Note:</strong> Daily trend remains under selling pressure following rejection from the 4,600+ peak. Wait for base consolidation or a bullish engulfing candle near <span class="text-emerald-400 font-mono">3,750.00</span> before scaling into long positions.
+        </p>
+      </section>
+
+      <!-- 9. LocalStorage Trade Journal & Price Alerts -->
+      <section class="bg-[#131722] rounded-xl border border-[#2A2E39] p-4 flex-1 flex flex-col shadow-xl">
+        <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-[#2A2E39]">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-book-bookmark text-amber-500"></i>
+            <h2 class="text-white font-bold text-sm" data-i18n="journalTitle">Trade Journal &amp; Price Alerts</h2>
+          </div>
+          <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono" data-i18n="autoSavedBadge">
+            Auto-Saved
+          </span>
+        </div>
+
+        <!-- Add Note / Alert Form -->
+        <form onsubmit="addJournalEntry(event)" class="flex flex-col gap-2 mb-3">
+          <div class="flex gap-2">
+            <select id="noteTag" class="bg-[#0B0E14] border border-[#2A2E39] rounded-lg px-2.5 py-2 text-xs font-medium text-amber-400 outline-none">
+              <option value="ALERT">ALERT</option>
+              <option value="LONG">LONG</option>
+              <option value="SHORT">SHORT</option>
+              <option value="NOTE">NOTE</option>
+            </select>
+            <input type="text" id="noteInput" required placeholder="e.g., Buy XAU/USD if 1H closes above 3,785..." class="flex-1 bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none transition">
+            <button type="submit" class="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs transition shrink-0" data-i18n="addBtn">
+              Add
+            </button>
+          </div>
+        </form>
+
+        <!-- Saved Entries List -->
+        <div id="journalList" class="space-y-2 overflow-y-auto max-h-[250px] pr-1 flex-1">
+          <!-- Populated from localStorage -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- GitHub Pages Deployment Instructions Modal -->
+  <div id="deployModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#131722] border border-[#2A2E39] rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[#2A2E39]">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-brands fa-github text-xl text-white"></i>
+          <h3 class="text-white font-bold text-base" data-i18n="modalTitle">Host Free on GitHub Pages</h3>
+        </div>
+        <button onclick="closeDeployModal()" class="text-gray-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div class="mt-4 space-y-3 text-xs sm:text-sm text-gray-300 leading-relaxed" id="modalBodyContent">
+        <p>This entire Gold Tracking &amp; Telegram Alert Terminal is self-contained in a single static <code class="text-amber-400 bg-[#0B0E14] px-1.5 py-0.5 rounded">index.html</code> file—no backend server required:</p>
+        <ol class="list-decimal list-inside space-y-2 text-gray-300 bg-[#0B0E14] p-3.5 rounded-xl border border-[#2A2E39]">
+          <li>Create a new public repository on <strong class="text-white">GitHub</strong> (e.g., <code class="text-amber-400">gold-tracker</code>).</li>
+          <li>Upload this file as <code class="text-amber-400">index.html</code> to the root of your repository.</li>
+          <li>Go to <strong class="text-white">Settings &rarr; Pages</strong>, select the <code class="text-amber-400">main</code> branch, and click <strong class="text-white">Save</strong>.</li>
+          <li>Your live Gold &amp; Telegram Web App will be online at <code class="text-emerald-400">https://username.github.io/gold-tracker/</code>.</li>
+        </ol>
+      </div>
+      <div class="mt-5 flex justify-end gap-2">
+        <button onclick="copyFullSource()" class="px-4 py-2 rounded-lg bg-[#1E222D] hover:bg-[#2A2E39] text-amber-400 text-xs font-semibold border border-[#2A2E39] transition">
+          <i class="fa-regular fa-copy mr-1"></i> <span data-i18n="copyHtmlBtn">Copy HTML Source</span>
+        </button>
+        <button onclick="closeDeployModal()" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold transition" data-i18n="doneBtn">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="hidden fixed bottom-5 right-5 z-50 bg-[#1E222D] border border-amber-500/40 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium flex items-center gap-2">
+    <i class="fa-solid fa-circle-check text-amber-400"></i>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 0. BILINGUAL I18N DICTIONARY (ENGLISH & KHMER / ភាសាខ្មែរ)
+    // =========================================================================
+    const LANG_STORAGE_KEY = 'aureus_lang_pref_v1';
+    let currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'en';
+
+    const I18N = {
+      en: {
+        liveFeed: 'LIVE FEED',
+        brandSubtitle: 'XAU/USD Institutional Market Analytics & Risk Suite',
+        spotGold: 'XAU / USD Spot',
+        highLow24h: '24h High / Low',
+        aiMarketBias: 'AI Market Bias',
+        navDayAnalyst: 'Day Analyst',
+        navTelegram: 'Telegram Bot',
+        tgConnectedShort: 'TG Connected',
+        pauseFeed: 'Pause Feed',
+        resumeFeed: 'Resume Feed',
+        githubReady: 'GitHub Pages',
+        chartCandles: 'Candles',
+        chartLine: 'Line',
+        srLevelsBtn: 'S/R Levels',
+        chartLegendGold: 'GOLD',
+        ttOpen: 'Open:',
+        ttHigh: 'High:',
+        ttLow: 'Low:',
+        ttClose: 'Close:',
+
+        // Day Analyst Module
+        dayAnalystTitle: 'Buy Today vs. Best Day Analyst',
+        dayAnalystBadge: 'SMART ENTRY PLANNER',
+        dayAnalystSubtitle: 'Should we buy Gold TODAY, or WHICH DAY of the week gives the highest-probability entry?',
+        sendDayAnalystTg: 'Send Day Analyst to Telegram',
+        todayStatusLabel: "TODAY'S ENTRY EVALUATION",
+        todaySetupScore: "Today's Buy Readiness Score:",
+        whichDayLabel: 'WHICH DAY SHOULD WE BUY?',
+        primeWindowShort: '12:00–16:00 UTC',
+        targetBuyZone: 'Target Buy Zone:',
+        confirmationTrigger: 'Confirmation Trigger:',
+        inspectDayPrompt: 'Select any day below to inspect Analyst Strategy & Entry Plan:',
+        clickDayHint: 'Click a day tab to compare',
+        todayChip: 'TODAY',
+        bestChip: 'BEST',
+        winProbLabel: 'Institutional Win Rate',
+        liquidityLabel: 'Liquidity Level',
+        recommendedActionLabel: 'Analyst Action',
+        idealEntryWindowLabel: 'Ideal Entry Window',
+        strategyNoteLabel: 'Strategy Breakdown',
+
+        // AI Engine
+        aiEngineTitle: 'AI Risk & Buy/Wait Decision Engine',
+        aiEngineSubtitle: 'Real-time trend, RSI momentum & volatility evaluation — Should you buy Gold now?',
+        sendSignalTg: 'Send Signal & Risk Report to Telegram',
+        currentActionVerdict: 'Current Action Verdict',
+        signalConfidence: 'Signal Confidence:',
+        volatilityRisk: 'Volatility Risk',
+        rsiMomentum: 'RSI (14) Momentum',
+        rsiHint: 'Below 30 = Bounce Watch',
+        maTrendAlign: 'MA Trend Alignment',
+        aiEntryRuleHtml: '<strong class="text-white">Entry Rule:</strong> Only enter a <span class="text-emerald-400 font-semibold">BUY</span> position when price reclaims <span class="font-mono text-amber-400">SMA 20</span> during the <span class="text-amber-400 font-semibold">London–NY Overlap (12:00–16:00 UTC)</span> on <span class="text-emerald-400 font-semibold">Tue–Thu</span>.',
+
+        // Risk Calculator
+        calcTitle: 'XAU/USD Position & Risk Calculator',
+        calcSubtitle: 'Calculate optimal Gold Lot Size (1 Std Lot = 100 oz) & Setup Signal',
+        useLivePrice: 'Use Live Price',
+        labelBalance: 'Account Balance (USD)',
+        labelRiskPct: 'Risk Per Trade (%)',
+        labelEntry: 'Entry Price (XAU/USD)',
+        labelSL: 'Stop Loss Price',
+        labelTP: 'Take Profit Target',
+        setupVerdict: 'Setup Verdict',
+        recLotSize: 'Recommended Lot Size:',
+        capAtRisk: 'Capital at Risk:',
+        potProfit: 'Potential Profit:',
+        rrRatio: 'Reward / Risk Ratio:',
+
+        // Timing Advisor
+        timingTitle: 'Best Day & Time to Join Market (XAU/USD Timing Advisor)',
+        timingSubtitle: 'Institutional liquidity windows & weekly probability schedule',
+        utcClockLabel: 'UTC CLOCK',
+        localTimeLabel: 'LOCAL TIME',
+        primeOverlapLabel: 'PRIME OVERLAP',
+        weeklyMatrixTitle: 'Weekly Day-of-Week Probability Matrix',
+        sendTimingTg: 'Send Timing & Risk Briefing',
+
+        // Telegram Panel
+        tgPanelTitle: 'Telegram Bot Alerts',
+        tgPanelSubtitle: 'Direct Bot API · Auto-Saved in Browser',
+        tgStatusNotConfigured: 'NOT CONFIGURED',
+        tgStatusConnected: 'CONNECTED',
+        tgStatusApiError: 'API ERROR',
+        tgTokenLabel: 'Telegram Bot Token (from @BotFather)',
+        tgChatIdLabel: 'Telegram Chat ID (from @userinfobot)',
+        tgAutoToggle: 'Auto-Notify on Signal / Risk Change',
+        tgTimingToggle: 'Include Session & Day Timing Advice',
+        saveCredsBtn: 'Save Credentials',
+        sendTestBtn: 'Send Test Alert',
+        lastSentPrefix: 'Last sent:',
+        neverText: 'Never',
+        showHideToken: 'Show/Hide Token',
+
+        // Watchlist, Summary, Journal
+        watchlistTitle: 'Global Commodities & FX Watchlist',
+        realTimeTag: 'REAL-TIME',
+        techSummaryTitle: 'Technical Structure Summary',
+        keyResLabel: 'Key Resistance (R1)',
+        majorSupLabel: 'Major Support (S1)',
+        volRangeLabel: '24h Volatility Range',
+        analystNoteHtml: '<strong class="text-gray-200">Analyst Note:</strong> Daily trend remains under selling pressure following rejection from the 4,600+ peak. Wait for base consolidation or a bullish engulfing candle near <span class="text-emerald-400 font-mono">3,750.00</span> before scaling into long positions.',
+        journalTitle: 'Trade Journal & Price Alerts',
+        autoSavedBadge: 'Auto-Saved',
+        notePlaceholder: 'e.g., Buy XAU/USD if 1H closes above 3,785...',
+        addBtn: 'Add',
+        noJournalEntries: 'No trade notes saved yet. Add your first Gold setup above.',
+
+        // Modal & Toasts
+        modalTitle: 'Host Free on GitHub Pages',
+        copyHtmlBtn: 'Copy HTML Source',
+        doneBtn: 'Done',
+        modalBodyHtml: `
+          <p>This entire Gold Tracking &amp; Telegram Alert Terminal is self-contained in a single static <code class="text-amber-400 bg-[#0B0E14] px-1.5 py-0.5 rounded">index.html</code> file—no backend server required:</p>
+          <ol class="list-decimal list-inside space-y-2 text-gray-300 bg-[#0B0E14] p-3.5 rounded-xl border border-[#2A2E39]">
+            <li>Create a new public repository on <strong class="text-white">GitHub</strong> (e.g., <code class="text-amber-400">gold-tracker</code>).</li>
+            <li>Upload this file as <code class="text-amber-400">index.html</code> to the root of your repository.</li>
+            <li>Go to <strong class="text-white">Settings &rarr; Pages</strong>, select the <code class="text-amber-400">main</code> branch, and click <strong class="text-white">Save</strong>.</li>
+            <li>Your live Gold &amp; Telegram Web App will be online at <code class="text-emerald-400">https://username.github.io/gold-tracker/</code>.</li>
+          </ol>
+        `,
+        toastLangChanged: 'Language switched to English',
+        toastFeedResumed: 'Live market feed resumed',
+        toastFeedPaused: 'Market feed paused for chart analysis',
+        toastSavedStorage: 'Saved to local browser storage',
+        toastEntryRemoved: 'Entry removed',
+        toastTgSaved: 'Telegram credentials saved in browser!',
+        toastTgIncomplete: 'Saved (enter both Token & Chat ID to activate)',
+        toastTgMissing: 'Please enter your Telegram Bot Token and Chat ID first!',
+        toastTgTestSent: 'Test alert delivered to your Telegram!',
+        toastTgSignalSent: 'Signal & Risk Report sent to Telegram!',
+        toastTgTimingSent: 'Market Timing Briefing sent to Telegram!',
+        toastTgDayAnalystSent: 'Buy Today vs. Best Day Analyst sent to Telegram!'
+      },
+
+      km: {
+        liveFeed: 'ទិន្នន័យផ្ទាល់',
+        brandSubtitle: 'ប្រព័ន្ធវិភាគទីផ្សារមាស XAU/USD និងគ្រប់គ្រងហានិភ័យ',
+        spotGold: 'តម្លៃមាស XAU / USD',
+        highLow24h: 'ខ្ពស់បំផុត / ទាបបំផុត ២៤ម៉ោង',
+        aiMarketBias: 'ទិសដៅទីផ្សារ AI',
+        navDayAnalyst: 'វិភាគថ្ងៃទិញ',
+        navTelegram: 'តេឡេក្រាម',
+        tgConnectedShort: 'បានភ្ជាប់ TG',
+        pauseFeed: 'ផ្អាកទិន្នន័យ',
+        resumeFeed: 'បន្តទិន្នន័យ',
+        githubReady: 'GitHub Pages',
+        chartCandles: 'ទៀន (Candles)',
+        chartLine: 'ខ្សែ (Line)',
+        srLevelsBtn: 'កម្រិត S/R',
+        chartLegendGold: 'មាស (GOLD)',
+        ttOpen: 'បើក:',
+        ttHigh: 'ខ្ពស់:',
+        ttLow: 'ទាប:',
+        ttClose: 'បិទ:',
+
+        // Day Analyst Module (តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?)
+        dayAnalystTitle: 'អ្នកវិភាគ៖ តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?',
+        dayAnalystBadge: 'ផែនការចូលទិញឆ្លាតវៃ',
+        dayAnalystSubtitle: 'តើយើងគួរទិញមាសនៅថ្ងៃនេះ ឬគួររង់ចាំថ្ងៃណាក្នុងសប្តាហ៍ដែលមានឱកាសចំណេញខ្ពស់បំផុត?',
+        sendDayAnalystTg: 'ផ្ញើការវិភាគថ្ងៃទិញទៅ Telegram',
+        todayStatusLabel: 'ការវាយតម្លៃសម្រាប់ថ្ងៃនេះ',
+        todaySetupScore: 'ពិន្ទុភាពរួចរាល់ក្នុងការទិញថ្ងៃនេះ៖',
+        whichDayLabel: 'តើថ្ងៃណាល្អបំផុតសម្រាប់ទិញ?',
+        primeWindowShort: 'ម៉ោង 12:00–16:00 UTC',
+        targetBuyZone: 'តំបន់គោលដៅទិញ៖',
+        confirmationTrigger: 'សញ្ញាបញ្ជាក់ចូលទិញ៖',
+        inspectDayPrompt: 'ជ្រើសរើសថ្ងៃណាមួយខាងក្រោម ដើម្បីមើលយុទ្ធសាស្ត្រអ្នកវិភាគ៖',
+        clickDayHint: 'ចុចលើថ្ងៃដើម្បីប្រៀបធៀប',
+        todayChip: 'ថ្ងៃនេះ',
+        bestChip: 'ល្អបំផុត',
+        winProbLabel: 'អត្រាជោគជ័យស្ថាប័ន',
+        liquidityLabel: 'កម្រិតសន្ទុះទីផ្សារ',
+        recommendedActionLabel: 'សកម្មភាពណែនាំ',
+        idealEntryWindowLabel: 'ម៉ោងចូលទិញល្អបំផុត',
+        strategyNoteLabel: 'ការពន្យល់យុទ្ធសាស្ត្រលម្អិត',
+
+        // AI Engine
+        aiEngineTitle: 'ប្រព័ន្ធ AI វិភាគហានិភ័យ និងសម្រេចចិត្ត ទិញ ឬ រង់ចាំ',
+        aiEngineSubtitle: 'ការវាយតម្លៃនិន្នាការ សន្ទុះ RSI និងហានិភ័យ — តើគួរទិញមាសឥឡូវនេះឬទេ?',
+        sendSignalTg: 'ផ្ញើរបាយការណ៍សញ្ញាទៅ Telegram',
+        currentActionVerdict: 'សេចក្តីសម្រេចបច្ចុប្បន្ន',
+        signalConfidence: 'ទំនុកចិត្តនៃសញ្ញា៖',
+        volatilityRisk: 'ហានិភ័យប្រែប្រួលតម្លៃ',
+        rsiMomentum: 'សន្ទុះ RSI (14)',
+        rsiHint: 'ក្រោម 30 = តាមដានការងើបឡើងវិញ',
+        maTrendAlign: 'និន្នាការខ្សែ MA',
+        aiEntryRuleHtml: '<strong class="text-white">គោលការណ៍ចូលទិញ៖</strong> ចូលទិញ (<span class="text-emerald-400 font-semibold">BUY</span>) តែនៅពេលតម្លៃឡើងផុត <span class="font-mono text-amber-400">SMA 20</span> ក្នុងអំឡុងម៉ោង <span class="text-amber-400 font-semibold">London–NY Overlap (12:00–16:00 UTC)</span> នៅថ្ងៃ <span class="text-emerald-400 font-semibold">អង្គារ ដល់ ព្រហស្បតិ៍</span>។',
+
+        // Risk Calculator
+        calcTitle: 'កម្មវិធីគណនាទំហំ Lot និងហានិភ័យ XAU/USD',
+        calcSubtitle: 'គណនាទំហំ Lot មាសសមស្រប (1 Std Lot = 100 oz) និងសញ្ញាចំណេញ/ខាត',
+        useLivePrice: 'ប្រើតម្លៃបច្ចុប្បន្ន',
+        labelBalance: 'ទឹកប្រាក់ក្នុងគណនី (USD)',
+        labelRiskPct: 'ហានិភ័យក្នុងមួយជើង (%)',
+        labelEntry: 'តម្លៃចូលទិញ (Entry)',
+        labelSL: 'តម្លៃកាត់ខាត (Stop Loss)',
+        labelTP: 'តម្លៃយកចំណេញ (Take Profit)',
+        setupVerdict: 'លទ្ធផលវិភាគ',
+        recLotSize: 'ទំហំ Lot ដែលណែនាំ៖',
+        capAtRisk: 'ប្រាក់ហានិភ័យអតិបរមា៖',
+        potProfit: 'ប្រាក់ចំណេញរំពឹងទុក៖',
+        rrRatio: 'សមាមាត្រ ចំណេញ / ខាត៖',
+
+        // Timing Advisor
+        timingTitle: 'ថ្ងៃ និងម៉ោងល្អបំផុតដើម្បីចូលទីផ្សារ (XAU/USD Timing Advisor)',
+        timingSubtitle: 'ម៉ោងទីផ្សារធំៗបើកដំណើរការ និងតារាងភាគរយប្រចាំសប្តាហ៍',
+        utcClockLabel: 'ម៉ោងសកល UTC',
+        localTimeLabel: 'ម៉ោងក្នុងស្រុក',
+        primeOverlapLabel: 'ម៉ោងមាស (OVERLAP)',
+        weeklyMatrixTitle: 'តារាងវាយតម្លៃប្រចាំថ្ងៃ (ច័ន្ទ - សុក្រ)',
+        sendTimingTg: 'ផ្ញើកាលវិភាគទីផ្សារទៅ Telegram',
+
+        // Telegram Panel
+        tgPanelTitle: 'ការជូនដំណឹងតាម Telegram Bot',
+        tgPanelSubtitle: 'ភ្ជាប់ផ្ទាល់ · រក្សាទុកស្វ័យប្រវត្តិក្នុង Browser',
+        tgStatusNotConfigured: 'មិនទាន់ភ្ជាប់',
+        tgStatusConnected: 'បានភ្ជាប់រួចរាល់',
+        tgStatusApiError: 'បញ្ហា API',
+        tgTokenLabel: 'លេខកូដ Bot Token (ពី @BotFather)',
+        tgChatIdLabel: 'លេខសម្គាល់ Chat ID (ពី @userinfobot)',
+        tgAutoToggle: 'ផ្ញើសារស្វ័យប្រវត្តិពេលសញ្ញាផ្លាស់ប្តូរ',
+        tgTimingToggle: 'ភ្ជាប់ជាមួយការណែនាំថ្ងៃ និងម៉ោងទិញ',
+        saveCredsBtn: 'រក្សាទុកព័ត៌មាន',
+        sendTestBtn: 'សាកល្បងផ្ញើសារ',
+        lastSentPrefix: 'ផ្ញើចុងក្រោយ៖',
+        neverText: 'មិនទាន់មាន',
+        showHideToken: 'បង្ហាញ/លាក់ Token',
+
+        // Watchlist, Summary, Journal
+        watchlistTitle: 'តារាងតាមដានមាស និងរូបិយប័ណ្ណសកល',
+        realTimeTag: 'ផ្ទាល់',
+        techSummaryTitle: 'សង្ខេបរចនាសម្ព័ន្ធបច្ចេកទេស',
+        keyResLabel: 'របាំងតម្លៃខាងលើ (R1)',
+        majorSupLabel: 'ទម្រតម្លៃខាងក្រោម (S1)',
+        volRangeLabel: 'គម្លាតប្រែប្រួល ២៤ម៉ោង',
+        analystNoteHtml: '<strong class="text-gray-200">កំណត់សម្គាល់អ្នកវិភាគ៖</strong> និន្នាការប្រចាំថ្ងៃនៅតែស្ថិតក្រោមសម្ពាធលក់។ សូមរង់ចាំតម្លៃបង្កើតមូលដ្ឋានរឹងមាំ ឬទៀនបញ្ជាក់ការឡើងវិញនៅក្បែរ <span class="text-emerald-400 font-mono">3,750.00</span> មុននឹងចូលទិញ។',
+        journalTitle: 'កំណត់ត្រាជួញដូរ និងការជូនដំណឹងតម្លៃ',
+        autoSavedBadge: 'រក្សាទុកស្វ័យប្រវត្តិ',
+        notePlaceholder: 'ឧទាហរណ៍៖ ទិញ XAU/USD ប្រសិនបើទៀន 1H បិទលើ 3,785...',
+        addBtn: 'បន្ថែម',
+        noJournalEntries: 'មិនទាន់មានកំណត់ត្រាជួញដូរនៅឡើយទេ។ សូមបន្ថែមផែនការរបស់អ្នកខាងលើ។',
+
+        // Modal & Toasts
+        modalTitle: 'ដាក់ឱ្យដំណើរការដោយឥតគិតថ្លៃលើ GitHub Pages',
+        copyHtmlBtn: 'ចម្លងកូដ HTML',
+        doneBtn: 'រួចរាល់',
+        modalBodyHtml: `
+          <p>កម្មវិធីតាមដានតម្លៃមាស និងជូនដំណឹងតាម Telegram នេះត្រូវបានរៀបចំក្នុងឯកសារ <code class="text-amber-400 bg-[#0B0E14] px-1.5 py-0.5 rounded">index.html</code> តែមួយគត់៖</p>
+          <ol class="list-decimal list-inside space-y-2 text-gray-300 bg-[#0B0E14] p-3.5 rounded-xl border border-[#2A2E39]">
+            <li>បង្កើត Repository ថ្មីនៅលើ <strong class="text-white">GitHub</strong> (ឧទាហរណ៍៖ <code class="text-amber-400">gold-tracker</code>)។</li>
+            <li>បញ្ចូលឯកសារនេះជាឈ្មោះ <code class="text-amber-400">index.html</code> ទៅក្នុង Repository របស់អ្នក។</li>
+            <li>ចូលទៅកាន់ <strong class="text-white">Settings &rarr; Pages</strong> ជ្រើសរើស Branch <code class="text-amber-400">main</code> រួចចុច <strong class="text-white">Save</strong>។</li>
+            <li>គេហទំព័ររបស់អ្នកនឹងដំណើរការផ្ទាល់នៅ <code class="text-emerald-400">https://username.github.io/gold-tracker/</code>។</li>
+          </ol>
+        `,
+        toastLangChanged: 'បានប្តូរភាសាទៅជា ភាសាខ្មែរ',
+        toastFeedResumed: 'បានបន្តទិន្នន័យទីផ្សារផ្ទាល់',
+        toastFeedPaused: 'បានផ្អាកទិន្នន័យដើម្បីវិភាគក្រាហ្វ',
+        toastSavedStorage: 'បានរក្សាទុកក្នុង Browser របស់អ្នក',
+        toastEntryRemoved: 'បានលុបកំណត់ត្រា',
+        toastTgSaved: 'បានរក្សាទុកព័ត៌មាន Telegram ក្នុង Browser!',
+        toastTgIncomplete: 'បានរក្សាទុក (សូមបំពេញទាំង Token និង Chat ID)',
+        toastTgMissing: 'សូមបញ្ចូល Telegram Bot Token និង Chat ID ជាមុនសិន!',
+        toastTgTestSent: 'បានផ្ញើសារសាកល្បងទៅកាន់ Telegram របស់អ្នក!',
+        toastTgSignalSent: 'បានផ្ញើរបាយការណ៍វិភាគទៅកាន់ Telegram!',
+        toastTgTimingSent: 'បានផ្ញើកាលវិភាគទីផ្សារទៅកាន់ Telegram!',
+        toastTgDayAnalystSent: 'បានផ្ញើការវិភាគ "ទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ" ទៅ Telegram!'
+      }
+    };
+
+    function t(key) {
+      return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang === 'km' ? 'km' : 'en';
+      document.documentElement.lang = currentLang;
+      try {
+        localStorage.setItem(LANG_STORAGE_KEY, currentLang);
+      } catch (e) {}
+
+      // Toggle active button styles
+      const btnEn = document.getElementById('langBtnEn');
+      const btnKm = document.getElementById('langBtnKm');
+      if (currentLang === 'en') {
+        btnEn.className = 'px-2.5 py-1.5 rounded-md text-xs font-bold bg-amber-500 text-black transition';
+        btnKm.className = 'px-2.5 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white transition';
+      } else {
+        btnKm.className = 'px-2.5 py-1.5 rounded-md text-xs font-bold bg-amber-500 text-black transition';
+        btnEn.className = 'px-2.5 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white transition';
+      }
+
+      // Apply static data-i18n attributes
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (I18N[currentLang][key]) {
+          el.textContent = I18N[currentLang][key];
+        }
+      });
+
+      // Apply rich HTML blocks & placeholders
+      const ruleEl = document.getElementById('aiEntryRuleText');
+      if (ruleEl) ruleEl.innerHTML = t('aiEntryRuleHtml');
+
+      const noteBox = document.getElementById('analystNoteBox');
+      if (noteBox) noteBox.innerHTML = t('analystNoteHtml');
+
+      const modalBody = document.getElementById('modalBodyContent');
+      if (modalBody) modalBody.innerHTML = t('modalBodyHtml');
+
+      const noteInput = document.getElementById('noteInput');
+      if (noteInput) noteInput.placeholder = t('notePlaceholder');
+
+      // Update feed pause/resume text
+      const feedText = document.getElementById('feedText');
+      if (feedText) feedText.textContent = isLive ? t('pauseFeed') : t('resumeFeed');
+
+      // Re-render all dynamic sections in the selected language
+      const configured = Boolean(document.getElementById('tgBotToken')?.value.trim() && document.getElementById('tgChatId')?.value.trim());
+      updateTelegramStatusUI(configured);
+      renderWatchlist();
+      calculateRisk();
+      evaluateMarketSignal();
+      updateSessionClock();
+      renderDayAnalyst();
+      renderJournal();
+      updateHeaderSentiment();
+    }
+
+    // =========================================================================
+    // 1. MARKET DATA & STATE INITIALIZATION
+    // =========================================================================
+    let isLive = true;
+    let currentTimeframe = '1D';
+    let chartType = 'candle'; // 'candle' or 'line'
+    let indicators = {
+      sma20: true,
+      ema50: true,
+      sr: true
+    };
+
+    // Baseline XAU/USD spot price anchored around $3,771.46
+    let goldPrice = 3771.46;
+    const goldOpen24h = 3848.93;
+    let goldHigh24h = 3852.10;
+    let goldLow24h = 3768.90;
+    let hoverIndex = -1;
+
+    // Multi-Asset Watchlist Data
+    const watchlist = [
+      { symbol: 'XAU/USD', nameEn: 'Gold Spot (1 oz)', nameKm: 'មាសសុទ្ធ (1 oz)', price: 3771.46, prevClose: 3848.93, decimals: 2, icon: 'fa-coins', color: 'text-amber-400' },
+      { symbol: 'XAG/USD', nameEn: 'Silver Spot', nameKm: 'ប្រាក់ (Silver)', price: 45.95, prevClose: 47.37, decimals: 2, icon: 'fa-ring', color: 'text-slate-300' },
+      { symbol: 'XPT/USD', nameEn: 'Platinum Spot', nameKm: 'ផ្លាទីន (Platinum)', price: 1401.60, prevClose: 1428.60, decimals: 2, icon: 'fa-gem', color: 'text-cyan-300' },
+      { symbol: 'USOIL', nameEn: 'WTI Crude Oil', nameKm: 'ប្រេងឆៅ WTI', price: 82.75, prevClose: 85.60, decimals: 2, icon: 'fa-oil-can', color: 'text-orange-400' },
+      { symbol: 'EUR/USD', nameEn: 'Euro / US Dollar', nameKm: 'អឺរ៉ូ / ដុល្លារអាមេរិក', price: 1.0981, prevClose: 1.0998, decimals: 4, icon: 'fa-euro-sign', color: 'text-indigo-400' }
+    ];
+
+    const candleStore = {};
+
+    function generateInitialCandles(tf) {
+      const count = 65;
+      const candles = [];
+      const now = Date.now();
+      const stepMap = {
+        '1m': 60 * 1000,
+        '15m': 15 * 60 * 1000,
+        '1H': 60 * 60 * 1000,
+        '1D': 24 * 60 * 60 * 1000,
+        '1W': 7 * 24 * 60 * 60 * 1000
+      };
+      const volMap = { '1m': 2.2, '15m': 6.5, '1H': 14.0, '1D': 38.0, '1W': 75.0 };
+      const stepMs = stepMap[tf] || stepMap['1D'];
+      const vol = volMap[tf] || 25.0;
+
+      let price = tf === '1D' ? 4280 : (tf === '1W' ? 4520 : 3835);
+      for (let i = 0; i < count; i++) {
+        const isLast = i === count - 1;
+        const progress = i / count;
+        const target = 3771.46;
+        const pull = (target - price) * (progress * 0.18);
+        const change = (Math.random() - 0.52) * vol + pull;
+
+        const open = price;
+        const close = isLast ? goldPrice : Math.max(3500, open + change);
+        const high = Math.max(open, close) + Math.random() * (vol * 0.45);
+        const low = Math.min(open, close) - Math.random() * (vol * 0.45);
+
+        candles.push({
+          time: now - (count - 1 - i) * stepMs,
+          open: Number(open.toFixed(2)),
+          high: Number(high.toFixed(2)),
+          low: Number(low.toFixed(2)),
+          close: Number(close.toFixed(2))
+        });
+        price = close;
+      }
+      return candles;
+    }
+
+    ['1m', '15m', '1H', '1D', '1W'].forEach(tf => {
+      candleStore[tf] = generateInitialCandles(tf);
+    });
+
+    // =========================================================================
+    // 2. TECHNICAL INDICATORS MATH (SMA 20 & EMA 50)
+    // =========================================================================
+    function calcSMA(data, period) {
+      return data.map((_, idx) => {
+        if (idx < period - 1) return null;
+        let sum = 0;
+        for (let i = 0; i < period; i++) sum += data[idx - i].close;
+        return sum / period;
+      });
+    }
+
+    function calcEMA(data, period) {
+      const k = 2 / (period + 1);
+      const emaArray = [];
+      let ema = data[0].close;
+      for (let i = 0; i < data.length; i++) {
+        ema = data[i].close * k + ema * (1 - k);
+        emaArray.push(i >= 10 ? ema : null);
+      }
+      return emaArray;
+    }
+
+    // =========================================================================
+    // 3. INTERACTIVE HTML5 CANVAS CHART RENDERER
+    // =========================================================================
+    const canvas = document.getElementById('goldChart');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('chartContainer');
+
+    function resizeCanvas() {
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawChart();
+    }
+
+    function drawChart() {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      const candles = candleStore[currentTimeframe];
+      if (!candles || candles.length === 0) return;
+
+      const padLeft = 14;
+      const padRight = 68;
+      const padTop = 20;
+      const padBottom = 26;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      ctx.fillStyle = '#0F131C';
+      ctx.fillRect(0, 0, width, height);
+
+      let minPrice = Infinity;
+      let maxPrice = -Infinity;
+      candles.forEach(c => {
+        if (c.low < minPrice) minPrice = c.low;
+        if (c.high > maxPrice) maxPrice = c.high;
+      });
+
+      const supportLevel = 3750.00;
+      const resistanceLevel = 3820.50;
+      if (indicators.sr) {
+        minPrice = Math.min(minPrice, supportLevel - 10);
+        maxPrice = Math.max(maxPrice, resistanceLevel + 10);
+      }
+
+      const range = maxPrice - minPrice || 1;
+      minPrice -= range * 0.06;
+      maxPrice += range * 0.06;
+      const finalRange = maxPrice - minPrice;
+
+      const priceToY = (p) => padTop + ((maxPrice - p) / finalRange) * plotH;
+      const yToPrice = (y) => maxPrice - ((y - padTop) / plotH) * finalRange;
+
+      // Grid lines
+      ctx.strokeStyle = '#1E222D';
+      ctx.lineWidth = 1;
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#787B86';
+      ctx.textAlign = 'left';
+
+      const gridRows = 6;
+      for (let i = 0; i <= gridRows; i++) {
+        const y = padTop + (plotH / gridRows) * i;
+        const pVal = yToPrice(y);
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(width - padRight, y);
+        ctx.stroke();
+
+        ctx.fillText(pVal.toFixed(2), width - padRight + 6, y + 4);
+      }
+
+      // Vertical Grid Lines
+      const stepX = plotW / candles.length;
+      for (let i = 0; i < candles.length; i += 10) {
+        const x = padLeft + i * stepX + stepX / 2;
+        ctx.beginPath();
+        ctx.moveTo(x, padTop);
+        ctx.lineTo(x, height - padBottom);
+        ctx.stroke();
+
+        const d = new Date(candles[i].time);
+        const label = currentTimeframe === '1D' || currentTimeframe === '1W'
+          ? `${d.getMonth() + 1}/${d.getDate()}`
+          : `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        ctx.fillText(label, x - 14, height - 8);
+      }
+
+      // Support & Resistance Zones
+      if (indicators.sr) {
+        const resY = priceToY(resistanceLevel);
+        ctx.save();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = 'rgba(242, 54, 69, 0.65)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, resY);
+        ctx.lineTo(width - padRight, resY);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(242, 54, 69, 0.85)';
+        ctx.fillText('R1 3820.5', padLeft + 6, resY - 5);
+
+        const supY = priceToY(supportLevel);
+        ctx.strokeStyle = 'rgba(8, 153, 129, 0.75)';
+        ctx.beginPath();
+        ctx.moveTo(padLeft, supY);
+        ctx.lineTo(width - padRight, supY);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(8, 153, 129, 0.9)';
+        ctx.fillText('S1 3750.0', padLeft + 6, supY - 5);
+        ctx.restore();
+      }
+
+      // Candlesticks or Line Chart
+      if (chartType === 'candle') {
+        const candleW = Math.max(2.5, stepX * 0.64);
+        candles.forEach((c, i) => {
+          const xCenter = padLeft + i * stepX + stepX / 2;
+          const isBull = c.close >= c.open;
+          const color = isBull ? '#089981' : '#F23645';
+
+          const yHigh = priceToY(c.high);
+          const yLow = priceToY(c.low);
+          const yOpen = priceToY(c.open);
+          const yClose = priceToY(c.close);
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(xCenter, yHigh);
+          ctx.lineTo(xCenter, yLow);
+          ctx.stroke();
+
+          const bodyTop = Math.min(yOpen, yClose);
+          const bodyH = Math.max(1.5, Math.abs(yClose - yOpen));
+          ctx.fillStyle = color;
+          ctx.fillRect(xCenter - candleW / 2, bodyTop, candleW, bodyH);
+        });
+      } else {
+        ctx.beginPath();
+        candles.forEach((c, i) => {
+          const x = padLeft + i * stepX + stepX / 2;
+          const y = priceToY(c.close);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const grad = ctx.createLinearGradient(0, padTop, 0, height - padBottom);
+        grad.addColorStop(0, 'rgba(245, 158, 11, 0.28)');
+        grad.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
+        ctx.lineTo(padLeft + (candles.length - 1) * stepX + stepX / 2, height - padBottom);
+        ctx.lineTo(padLeft + stepX / 2, height - padBottom);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      // SMA 20
+      if (indicators.sma20) {
+        const sma = calcSMA(candles, 20);
+        ctx.beginPath();
+        ctx.strokeStyle = '#38BDF8';
+        ctx.lineWidth = 1.5;
+        let started = false;
+        sma.forEach((val, i) => {
+          if (val === null) return;
+          const x = padLeft + i * stepX + stepX / 2;
+          const y = priceToY(val);
+          if (!started) { ctx.moveTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      // EMA 50
+      if (indicators.ema50) {
+        const ema = calcEMA(candles, 50);
+        ctx.beginPath();
+        ctx.strokeStyle = '#C084FC';
+        ctx.lineWidth = 1.5;
+        let started = false;
+        ema.forEach((val, i) => {
+          if (val === null) return;
+          const x = padLeft + i * stepX + stepX / 2;
+          const y = priceToY(val);
+          if (!started) { ctx.moveTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      // Current Live Price Dashed Line & Right Axis Tag
+      const lastCandle = candles[candles.length - 1];
+      const liveY = priceToY(lastCandle.close);
+      const isUp = lastCandle.close >= lastCandle.open;
+      const tagColor = isUp ? '#089981' : '#F23645';
+
+      ctx.save();
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = tagColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, liveY);
+      ctx.lineTo(width - padRight, liveY);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = tagColor;
+      ctx.fillRect(width - padRight + 2, liveY - 9, padRight - 4, 18);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 11px "JetBrains Mono", monospace';
+      ctx.fillText(lastCandle.close.toFixed(2), width - padRight + 6, liveY + 4);
+
+      // Crosshair on Hover
+      if (hoverIndex >= 0 && hoverIndex < candles.length) {
+        const hc = candles[hoverIndex];
+        const hx = padLeft + hoverIndex * stepX + stepX / 2;
+        const hy = priceToY(hc.close);
+
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(hx, padTop);
+        ctx.lineTo(hx, height - padBottom);
+        ctx.moveTo(padLeft, hy);
+        ctx.lineTo(width - padRight, hy);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function handleChartPointer(clientX) {
+      const rect = canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const padLeft = 14;
+      const padRight = 68;
+      const plotW = rect.width - padLeft - padRight;
+      const candles = candleStore[currentTimeframe];
+      const stepX = plotW / candles.length;
+
+      const idx = Math.floor((x - padLeft) / stepX);
+      const tooltip = document.getElementById('chartTooltip');
+
+      if (idx >= 0 && idx < candles.length) {
+        hoverIndex = idx;
+        const c = candles[idx];
+        tooltip.classList.remove('hidden');
+        const d = new Date(c.time);
+        document.getElementById('ttDate').textContent = d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        document.getElementById('ttO').textContent = c.open.toFixed(2);
+        document.getElementById('ttH').textContent = c.high.toFixed(2);
+        document.getElementById('ttL').textContent = c.low.toFixed(2);
+        document.getElementById('ttC').textContent = c.close.toFixed(2);
+        updateOHLCBar(c);
+        drawChart();
+      } else {
+        hoverIndex = -1;
+        tooltip.classList.add('hidden');
+        drawChart();
+      }
+    }
+
+    canvas.addEventListener('mousemove', (e) => handleChartPointer(e.clientX));
+    canvas.addEventListener('mouseleave', () => {
+      hoverIndex = -1;
+      document.getElementById('chartTooltip').classList.add('hidden');
+      const candles = candleStore[currentTimeframe];
+      updateOHLCBar(candles[candles.length - 1]);
+      drawChart();
+    });
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) handleChartPointer(e.touches[0].clientX);
+    }, { passive: true });
+
+    function updateOHLCBar(c) {
+      if (!c) return;
+      document.getElementById('ohlcO').textContent = c.open.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('ohlcH').textContent = c.high.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('ohlcL').textContent = c.low.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('ohlcC').textContent = c.close.toLocaleString('en-US', { minimumFractionDigits: 2 });
+    }
+
+    // =========================================================================
+    // 4. CHART CONTROLS (TIMEFRAME, TYPE, INDICATORS)
+    // =========================================================================
+    function setTimeframe(tf) {
+      currentTimeframe = tf;
+      document.getElementById('legendTf').textContent = tf;
+      document.querySelectorAll('.tf-btn').forEach(btn => {
+        if (btn.dataset.tf === tf) {
+          btn.className = 'tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold bg-amber-500 text-black transition';
+        } else {
+          btn.className = 'tf-btn px-2.5 py-1 rounded text-xs font-mono font-semibold text-gray-400 hover:text-white transition';
+        }
+      });
+      const candles = candleStore[tf];
+      updateOHLCBar(candles[candles.length - 1]);
+      drawChart();
+    }
+
+    function setChartType(type) {
+      chartType = type;
+      const btnCandle = document.getElementById('btnCandle');
+      const btnLine = document.getElementById('btnLine');
+      if (type === 'candle') {
+        btnCandle.className = 'px-2.5 py-1 rounded text-xs font-medium bg-[#2A2E39] text-amber-400 transition';
+        btnLine.className = 'px-2.5 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition';
+      } else {
+        btnLine.className = 'px-2.5 py-1 rounded text-xs font-medium bg-[#2A2E39] text-amber-400 transition';
+        btnCandle.className = 'px-2.5 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition';
+      }
+      drawChart();
+    }
+
+    function toggleIndicator(key) {
+      indicators[key] = !indicators[key];
+      const el = document.getElementById(`ind-${key}`);
+      if (indicators[key]) {
+        el.classList.remove('opacity-40');
+      } else {
+        el.classList.add('opacity-40');
+      }
+      drawChart();
+    }
+
+    // =========================================================================
+    // 5. ENTRY & RISK MANAGEMENT CALCULATOR
+    // =========================================================================
+    function fillCurrentPrice() {
+      document.getElementById('calcEntry').value = goldPrice.toFixed(2);
+      document.getElementById('calcSL').value = (goldPrice - 16.50).toFixed(2);
+      document.getElementById('calcTP').value = (goldPrice + 42.00).toFixed(2);
+      calculateRisk();
+      showToast(currentLang === 'km'
+        ? `បានធ្វើបច្ចុប្បន្នភាពតម្លៃចូលទិញ XAU/USD: $${goldPrice.toFixed(2)}`
+        : `Entry updated to live XAU/USD: $${goldPrice.toFixed(2)}`);
+    }
+
+    function calculateRisk() {
+      const balance = parseFloat(document.getElementById('calcBalance').value) || 0;
+      const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 0;
+      const entry = parseFloat(document.getElementById('calcEntry').value) || 0;
+      const sl = parseFloat(document.getElementById('calcSL').value) || 0;
+      const tp = parseFloat(document.getElementById('calcTP').value) || 0;
+
+      const riskUsd = balance * (riskPct / 100);
+      const slDistance = Math.abs(entry - sl);
+      const tpDistance = Math.abs(tp - entry);
+
+      let lots = slDistance > 0 ? riskUsd / (slDistance * 100) : 0;
+      lots = Math.max(0.01, lots);
+
+      const potentialProfit = lots * tpDistance * 100;
+      const rr = slDistance > 0 ? (tpDistance / slDistance) : 0;
+      const isLong = tp > entry && entry > sl;
+      const isShort = tp < entry && entry < sl;
+
+      document.getElementById('resLots').textContent = `${lots.toFixed(2)} Lots`;
+      document.getElementById('resRiskUsd').textContent = `-$${riskUsd.toFixed(2)}`;
+      document.getElementById('resRewardUsd').textContent = `+$${potentialProfit.toFixed(2)}`;
+      document.getElementById('resRR').textContent = `1 : ${rr.toFixed(2)}`;
+
+      const badge = document.getElementById('calcSignalBadge');
+      const advice = document.getElementById('calcAdvice');
+
+      if (!isLong && !isShort) {
+        badge.className = 'px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30';
+        badge.textContent = currentLang === 'km' ? 'កម្រិតមិនត្រឹមត្រូវ' : 'INVALID LEVELS';
+        advice.textContent = currentLang === 'km'
+          ? 'សូមប្រាកដថា Stop Loss និង Take Profit ស្ថិតនៅផ្នែកផ្ទុយគ្នានៃតម្លៃចូលទិញ (Entry)។'
+          : 'Ensure Stop Loss and Take Profit are placed on opposite sides of your Entry Price.';
+      } else if (rr >= 2.0) {
+        badge.className = 'px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+        badge.textContent = currentLang === 'km'
+          ? `${isLong ? 'ទិញល្អ (LONG)' : 'លក់ល្អ (SHORT)'} (1:${rr.toFixed(1)})`
+          : `${isLong ? 'VALID LONG' : 'VALID SHORT'} (1:${rr.toFixed(1)})`;
+        advice.textContent = currentLang === 'km'
+          ? `សមាមាត្រចំណេញ/ខាតល្អខ្លាំង (1:${rr.toFixed(2)})។ សូមរង់ចាំទៀនបញ្ជាក់សន្ទុះមុនពេលបើកជើងជួញដូរ។`
+          : `Strong Reward-to-Risk setup (1:${rr.toFixed(2)}). Confirm candlestick momentum before executing.`;
+      } else if (rr >= 1.2) {
+        badge.className = 'px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30';
+        badge.textContent = currentLang === 'km'
+          ? `មធ្យម R:R (1:${rr.toFixed(1)})`
+          : `MODERATE R:R (1:${rr.toFixed(1)})`;
+        advice.textContent = currentLang === 'km'
+          ? 'កម្រិតហានិភ័យអាចទទួលយកបាន ប៉ុន្តែគួរកំណត់គោលដៅយ៉ាងតិច 1:2.0 R:R ដើម្បីចំណេញរយៈពេលវែង។'
+          : 'Acceptable risk profile, though targeting at least 1:2.0 R:R improves long-term expectancy.';
+      } else {
+        badge.className = 'px-2.5 py-1 rounded-md text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+        badge.textContent = currentLang === 'km' ? 'រង់ចាំ / R:R ទាប' : 'WAIT / POOR R:R';
+        advice.textContent = currentLang === 'km'
+          ? 'ហានិភ័យខ្ពស់ជាងប្រាក់ចំណេញ (< 1:1.2)។ សូមបង្រួម Stop Loss ឬរង់ចាំតម្លៃធ្លាក់ចុះសិន។'
+          : 'Risk exceeds potential reward (< 1:1.2). Tighten Stop Loss or wait for a better pullback entry.';
+      }
+    }
+
+    // =========================================================================
+    // 6. WATCHLIST & LIVE MARKET SIMULATION ENGINE
+    // =========================================================================
+    function renderWatchlist() {
+      const container = document.getElementById('watchlistContainer');
+      container.innerHTML = watchlist.map(item => {
+        const diff = item.price - item.prevClose;
+        const pct = (diff / item.prevClose) * 100;
+        const isPos = diff >= 0;
+        const badgeClass = isPos
+          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25'
+          : 'bg-rose-500/15 text-rose-400 border-rose-500/25';
+
+        return `
+          <div class="px-4 py-3 flex items-center justify-between hover:bg-[#1E222D] transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-[#0B0E14] border border-[#2A2E39] flex items-center justify-center ${item.color}">
+                <i class="fa-solid ${item.icon} text-xs"></i>
+              </div>
+              <div>
+                <div class="text-white font-bold text-xs sm:text-sm font-mono">${item.symbol}</div>
+                <div class="text-[11px] text-gray-400">${currentLang === 'km' ? item.nameKm : item.nameEn}</div>
+              </div>
+            </div>
+            <div class="text-right font-mono">
+              <div class="text-white font-semibold text-xs sm:text-sm tabular-nums">${item.price.toFixed(item.decimals)}</div>
+              <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold border ${badgeClass} tabular-nums">
+                ${isPos ? '+' : ''}${pct.toFixed(2)}%
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateHeaderSentiment() {
+      const diff = goldPrice - goldOpen24h;
+      const pct = (diff / goldOpen24h) * 100;
+      const sentimentEl = document.getElementById('sentimentBadge');
+      if (!sentimentEl) return;
+
+      if (pct > 0.35) {
+        sentimentEl.className = 'inline-block mt-0.5 px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+        sentimentEl.textContent = currentLang === 'km' ? 'សន្ទុះឡើងថ្លៃ (BULLISH)' : 'BULLISH MOMENTUM';
+      } else if (pct < -0.5) {
+        sentimentEl.className = 'inline-block mt-0.5 px-2 py-0.5 rounded text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+        sentimentEl.textContent = currentLang === 'km' ? 'សម្ពាធធ្លាក់ចុះ (BEARISH)' : 'BEARISH PRESSURE';
+      } else {
+        sentimentEl.className = 'inline-block mt-0.5 px-2 py-0.5 rounded text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30';
+        sentimentEl.textContent = currentLang === 'km' ? 'ទីផ្សារទ្រឹង / រង់ចាំ' : 'NEUTRAL / CONSOLIDATING';
+      }
+    }
+
+    function updateMarketTick() {
+      if (!isLive) return;
+
+      const tickDelta = (Math.random() - 0.495) * 1.45;
+      goldPrice = Number((goldPrice + tickDelta).toFixed(2));
+      if (goldPrice > goldHigh24h) goldHigh24h = goldPrice;
+      if (goldPrice < goldLow24h) goldLow24h = goldPrice;
+
+      const diff = goldPrice - goldOpen24h;
+      const pct = (diff / goldOpen24h) * 100;
+      const isPos = diff >= 0;
+
+      const headerPriceEl = document.getElementById('headerPrice');
+      const headerChangeEl = document.getElementById('headerChange');
+      headerPriceEl.textContent = goldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      headerChangeEl.textContent = `${isPos ? '+' : ''}${diff.toFixed(2)} (${isPos ? '+' : ''}${pct.toFixed(2)}%)`;
+      headerChangeEl.className = `font-mono text-xs font-semibold tabular-nums ${isPos ? 'text-[#089981]' : 'text-[#F23645]'}`;
+
+      document.getElementById('headerHigh').textContent = goldHigh24h.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('headerLow').textContent = goldLow24h.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+      updateHeaderSentiment();
+
+      Object.keys(candleStore).forEach(tf => {
+        const list = candleStore[tf];
+        const last = list[list.length - 1];
+        last.close = goldPrice;
+        if (goldPrice > last.high) last.high = goldPrice;
+        if (goldPrice < last.low) last.low = goldPrice;
+      });
+
+      if (hoverIndex === -1) {
+        const activeCandles = candleStore[currentTimeframe];
+        updateOHLCBar(activeCandles[activeCandles.length - 1]);
+      }
+
+      watchlist[0].price = goldPrice;
+      for (let i = 1; i < watchlist.length; i++) {
+        const step = watchlist[i].decimals === 4 ? 0.0003 : watchlist[i].price * 0.0006;
+        watchlist[i].price = Number((watchlist[i].price + (Math.random() - 0.5) * step).toFixed(watchlist[i].decimals));
+      }
+
+      renderWatchlist();
+      evaluateMarketSignal();
+      renderDayAnalyst();
+      drawChart();
+    }
+
+    function toggleSimulation() {
+      isLive = !isLive;
+      const icon = document.getElementById('feedIcon');
+      const text = document.getElementById('feedText');
+      if (isLive) {
+        icon.className = 'fa-solid fa-pause text-amber-500';
+        text.textContent = t('pauseFeed');
+        showToast(t('toastFeedResumed'));
+      } else {
+        icon.className = 'fa-solid fa-play text-emerald-400';
+        text.textContent = t('resumeFeed');
+        showToast(t('toastFeedPaused'));
+      }
+    }
+
+    // =========================================================================
+    // 7. LOCALSTORAGE TRADE JOURNAL & ALERTS
+    // =========================================================================
+    const STORAGE_KEY = 'aureus_gold_journal_v1';
+
+    function getSavedEntries() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {
+        console.error('LocalStorage read error:', e);
+      }
+      return [
+        {
+          id: 1,
+          tag: 'ALERT',
+          text: currentLang === 'km'
+            ? 'តាមដានតំបន់ទម្រ 3,750.00 ប្រចាំថ្ងៃ សម្រាប់សញ្ញាទៀន Hammer ងើបឡើងវិញ។'
+            : 'Watch 3,750.00 daily support zone for bullish Hammer reversal candle.',
+          price: '3,771.46',
+          time: 'Today, 14:30'
+        },
+        {
+          id: 2,
+          tag: 'NOTE',
+          text: currentLang === 'km'
+            ? 'ជៀសវាងការចូលទិញពេលតម្លៃកំពុងធ្លាក់ខ្លាំង 1D; រង់ចាំក្រាហ្វ 1H ទ្រឹងសិន។'
+            : 'Avoid catching falling knives on 1D downtrend; wait for 1H consolidation.',
+          price: '3,785.00',
+          time: 'Yesterday'
+        }
+      ];
+    }
+
+    function renderJournal() {
+      const entries = getSavedEntries();
+      const listEl = document.getElementById('journalList');
+
+      if (entries.length === 0) {
+        listEl.innerHTML = `<div class="text-center text-gray-500 text-xs py-6">${t('noJournalEntries')}</div>`;
+        return;
+      }
+
+      const tagStyles = {
+        ALERT: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+        LONG: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+        SHORT: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+        NOTE: 'bg-sky-500/15 text-sky-400 border-sky-500/30'
+      };
+
+      listEl.innerHTML = entries.map(item => `
+        <div class="bg-[#0B0E14] border border-[#2A2E39] rounded-lg p-2.5 flex items-start justify-between gap-2 group">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${tagStyles[item.tag] || tagStyles.NOTE}">
+                ${item.tag}
+              </span>
+              <span class="text-[10px] font-mono text-gray-400">@ $${item.price} · ${item.time}</span>
+            </div>
+            <p class="text-xs text-gray-200 leading-snug">${escapeHtml(item.text)}</p>
+          </div>
+          <button onclick="deleteJournalEntry(${item.id})" class="text-gray-500 hover:text-rose-400 p-1 transition" title="Delete Note">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addJournalEntry(e) {
+      e.preventDefault();
+      const tag = document.getElementById('noteTag').value;
+      const input = document.getElementById('noteInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const entries = getSavedEntries();
+      const now = new Date();
+      entries.unshift({
+        id: Date.now(),
+        tag,
+        text,
+        price: goldPrice.toFixed(2),
+        time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      } catch (err) {
+        console.error('LocalStorage save error:', err);
+      }
+
+      input.value = '';
+      renderJournal();
+      showToast(t('toastSavedStorage'));
+    }
+
+    function deleteJournalEntry(id) {
+      const entries = getSavedEntries().filter(item => item.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      } catch (err) {
+        console.error('LocalStorage delete error:', err);
+      }
+      renderJournal();
+      showToast(t('toastEntryRemoved'));
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    // =========================================================================
+    // 8. MODAL & UTILITIES
+    // =========================================================================
+    function openDeployModal() {
+      document.getElementById('deployModal').classList.remove('hidden');
+    }
+
+    function closeDeployModal() {
+      document.getElementById('deployModal').classList.add('hidden');
+    }
+
+    function copyFullSource() {
+      const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      const tempArea = document.createElement('textarea');
+      tempArea.value = htmlContent;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(currentLang === 'km' ? 'បានចម្លងកូដ index.html ទាំងមូលរួចរាល់!' : 'Full index.html code copied to clipboard!');
+      } catch (err) {
+        showToast('Unable to copy automatically; save this page as index.html');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2800);
+    }
+
+    function scrollToDayAnalyst() {
+      const el = document.getElementById('dayAnalystSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // =========================================================================
+    // 9. NEW MODULE: BUY TODAY VS. WHICH DAY ANALYST ENGINE
+    // =========================================================================
+    let selectedAnalystDayIdx = null; // 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri
+
+    const DAY_ANALYST_PROFILES = {
+      1: {
+        dayIdx: 1,
+        nameEn: 'Monday',
+        nameKm: 'ថ្ងៃច័ន្ទ',
+        shortEn: 'MON',
+        shortKm: 'ច័ន្ទ',
+        winRate: '54%',
+        baseScore: 55,
+        liquidityEn: 'Low–Moderate',
+        liquidityKm: 'មធ្យម / តិច',
+        verdictEn: 'WAIT / OBSERVE',
+        verdictKm: 'រង់ចាំ / តាមដាន',
+        windowEn: '13:00 – 16:00 UTC',
+        windowKm: 'ម៉ោង 13:00 – 16:00 UTC',
+        zoneEn: '$3,745 – $3,755 (Support Sweep)',
+        zoneKm: '$3,745 – $3,755 (តំបន់ទម្រ)',
+        descEn: 'Monday opens with Asian range consolidation and frequent London false breakouts ("Judas Swings"). Institutional desks usually wait until Tuesday to commit major buy volume.',
+        descKm: 'ថ្ងៃច័ន្ទច្រើនតែមានចលនារុញតម្លៃបញ្ឆោតនៅពេលបើកទីផ្សារ London។ ស្ថាប័នធំៗច្រើនរង់ចាំដល់ថ្ងៃអង្គារទើបបញ្ចេញទុនទិញពិតប្រាកដ។'
+      },
+      2: {
+        dayIdx: 2,
+        nameEn: 'Tuesday',
+        nameKm: 'ថ្ងៃអង្គារ',
+        shortEn: 'TUE',
+        shortKm: 'អង្គារ',
+        winRate: '78%',
+        baseScore: 86,
+        liquidityEn: 'High Institutional',
+        liquidityKm: 'សន្ទុះស្ថាប័នខ្ពស់',
+        verdictEn: 'PRIME BUY DAY ★',
+        verdictKm: 'ថ្ងៃទិញល្អបំផុត ★',
+        windowEn: '12:00 – 16:00 UTC (Overlap)',
+        windowKm: 'ម៉ោង 12:00 – 16:00 UTC',
+        zoneEn: '$3,750 – $3,765 (Pullback Buy)',
+        zoneKm: '$3,750 – $3,765 (ទិញពេលចុះសម្រួល)',
+        descEn: 'Tuesday is statistically one of the highest-probability days to buy XAU/USD. Once Monday establishes the weekly low, institutional buyers step in during the London–NY Overlap.',
+        descKm: 'ថ្ងៃអង្គារគឺជាថ្ងៃដែលមានឱកាសចំណេញខ្ពស់បំផុតមួយសម្រាប់ទិញមាស បន្ទាប់ពីថ្ងៃច័ន្ទបានបង្កើតបាតតម្លៃប្រចាំសប្តាហ៍រួចរាល់។'
+      },
+      3: {
+        dayIdx: 3,
+        nameEn: 'Wednesday',
+        nameKm: 'ថ្ងៃពុធ',
+        shortEn: 'WED',
+        shortKm: 'ពុធ',
+        winRate: '81%',
+        baseScore: 90,
+        liquidityEn: 'Peak Mid-Week',
+        liquidityKm: 'សន្ទុះខ្លាំងបំផុតកណ្តាលសប្តាហ៍',
+        verdictEn: 'BEST BUY DAY ★',
+        verdictKm: 'ថ្ងៃល្អឯកសម្រាប់ទិញ ★',
+        windowEn: '12:00 – 16:00 UTC (Overlap)',
+        windowKm: 'ម៉ោង 12:00 – 16:00 UTC',
+        zoneEn: '$3,755 – $3,770 (Trend Continuation)',
+        zoneKm: '$3,755 – $3,770 (ទិញតាមនិន្នាការ)',
+        descEn: 'Wednesday delivers peak mid-week liquidity and clean directional follow-through. Ideal day to scale into confirmed bullish setups above SMA 20.',
+        descKm: 'ថ្ងៃពុធផ្តល់នូវទំហំជួញដូរកណ្តាលសប្តាហ៍ខ្ពស់បំផុត និងនិន្នាការច្បាស់លាស់ ល្អបំផុតសម្រាប់ចូលទិញនៅពេលតម្លៃឈរលើ SMA 20។'
+      },
+      4: {
+        dayIdx: 4,
+        nameEn: 'Thursday',
+        nameKm: 'ថ្ងៃព្រហស្បតិ៍',
+        shortEn: 'THU',
+        shortKm: 'ព្រហស្បតិ៍',
+        winRate: '76%',
+        baseScore: 82,
+        liquidityEn: 'High (US Data)',
+        liquidityKm: 'ខ្ពស់ (ព័ត៌មានសេដ្ឋកិច្ចអាមេរិក)',
+        verdictEn: 'GOOD BUY (IF TREND ALIGNS)',
+        verdictKm: 'អាចទិញបាន (បើនិន្នាការត្រូវ)',
+        windowEn: '12:30 – 16:00 UTC',
+        windowKm: 'ម៉ោង 12:30 – 16:00 UTC',
+        zoneEn: '$3,750 – $3,762 (Reversal Confirmation)',
+        zoneKm: '$3,750 – $3,762 (បញ្ជាក់ការងើបឡើង)',
+        descEn: 'Thursday offers strong continuation or mid-week reversal entries following US Jobless Claims, provided price holds above key daily support ($3,750).',
+        descKm: 'ថ្ងៃព្រហស្បតិ៍ផ្តល់ឱកាសទិញបន្តនិន្នាការ ឬងើបឡើងវិញបន្ទាប់ពីព័ត៌មានសេដ្ឋកិច្ចអាមេរិក ប្រសិនបើតម្លៃឈរលើទម្រ $3,750។'
+      },
+      5: {
+        dayIdx: 5,
+        nameEn: 'Friday',
+        nameKm: 'ថ្ងៃសុក្រ',
+        shortEn: 'FRI',
+        shortKm: 'សុក្រ',
+        winRate: '58%',
+        baseScore: 50,
+        liquidityEn: 'Volatile / Profit-Taking',
+        liquidityKm: 'ប្រែប្រួលខ្លាំង / បិទយកចំណេញ',
+        verdictEn: 'CAUTION / SCALP ONLY',
+        verdictKm: 'ប្រុងប្រយ័ត្ន / ជួញដូររយៈពេលខ្លី',
+        windowEn: '12:00 – 14:30 UTC',
+        windowKm: 'ម៉ោង 12:00 – 14:30 UTC',
+        zoneEn: 'Quick Scalps Only — Avoid Holding',
+        zoneKm: 'ជួញដូររយៈពេលខ្លីប៉ុណ្ណោះ — កុំទុកឆ្លងសប្តាហ៍',
+        descEn: 'Friday often experiences sudden institutional profit-taking and weekend hedging spikes. Avoid opening new swing buy positions late Friday; wait for Tuesday.',
+        descKm: 'ថ្ងៃសុក្រច្រើនមានការលក់យកចំណេញពីស្ថាប័នធំៗមុនបិទទីផ្សារចុងសប្តាហ៍។ គួរជៀសវាងបើកជើងទិញថ្មីនៅចុងថ្ងៃសុក្រ ហើយរង់ចាំថ្ងៃអង្គារ។'
+      }
+    };
+
+    function getDayAnalystSummary() {
+      const now = new Date();
+      const utcDay = now.getUTCDay(); // 0=Sun..6=Sat
+      const effectiveTodayIdx = (utcDay >= 1 && utcDay <= 5) ? utcDay : 2; // Default comparison to Tuesday if weekend
+      const todayProfile = DAY_ANALYST_PROFILES[effectiveTodayIdx];
+
+      const isWeekend = utcDay === 0 || utcDay === 6;
+      const dayNamesEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayNamesKm = ['ថ្ងៃអាទិត្យ', 'ថ្ងៃច័ន្ទ', 'ថ្ងៃអង្គារ', 'ថ្ងៃពុធ', 'ថ្ងៃព្រហស្បតិ៍', 'ថ្ងៃសុក្រ', 'ថ្ងៃសៅរ៍'];
+
+      const actualTodayName = currentLang === 'km' ? dayNamesKm[utcDay] : dayNamesEn[utcDay];
+
+      // Compute dynamic Today Buy Readiness Score (0-100) combining day-of-week quality + live technical signal
+      let techBonus = 0;
+      if (currentSignalState.actionCode === 'BUY') techBonus = 15;
+      else if (currentSignalState.actionCode === 'CAUTION') techBonus = -15;
+      else techBonus = -35; // Strong bearish pressure lowers today's buy score
+
+      const todayScore = isWeekend ? 20 : Math.max(15, Math.min(96, todayProfile.baseScore + techBonus));
+      const shouldBuyToday = !isWeekend && todayScore >= 72 && currentSignalState.actionCode === 'BUY';
+
+      // Decide Which Day is Best to Buy
+      let bestTargetEn = 'Tuesday / Wednesday';
+      let bestTargetKm = 'ថ្ងៃអង្គារ ឬ ថ្ងៃពុធ';
+      if (shouldBuyToday) {
+        bestTargetEn = `TODAY (${dayNamesEn[utcDay]})`;
+        bestTargetKm = `ថ្ងៃនេះ (${dayNamesKm[utcDay]})`;
+      } else if (utcDay === 1) {
+        bestTargetEn = 'Tomorrow (Tuesday) / Wednesday';
+        bestTargetKm = 'ថ្ងៃស្អែក (ថ្ងៃអង្គារ) ឬ ថ្ងៃពុធ';
+      } else if (utcDay === 2) {
+        bestTargetEn = 'Wednesday (Tomorrow) after Reversal';
+        bestTargetKm = 'ថ្ងៃពុធ (ថ្ងៃស្អែក) ក្រោយមានសញ្ញាបញ្ជាក់';
+      } else if (utcDay === 3 || utcDay === 4) {
+        bestTargetEn = 'Next Tuesday / Wednesday (or 1H Reclaim)';
+        bestTargetKm = 'ថ្ងៃអង្គារ / ថ្ងៃពុធ សប្តាហ៍ក្រោយ';
+      } else {
+        bestTargetEn = 'Upcoming Tuesday – Wednesday';
+        bestTargetKm = 'ថ្ងៃអង្គារ – ថ្ងៃពុធ ខាងមុខនេះ';
+      }
+
+      return {
+        utcDay,
+        isWeekend,
+        effectiveTodayIdx,
+        actualTodayName,
+        todayScore,
+        shouldBuyToday,
+        bestTarget: currentLang === 'km' ? bestTargetKm : bestTargetEn,
+        bestTargetEn,
+        bestTargetKm
+      };
+    }
+
+    function selectAnalystDay(dayIdx) {
+      selectedAnalystDayIdx = dayIdx;
+      renderDayAnalyst();
+    }
+
+    function renderDayAnalyst() {
+      const summary = getDayAnalystSummary();
+      if (selectedAnalystDayIdx === null) {
+        selectedAnalystDayIdx = summary.effectiveTodayIdx;
+      }
+
+      const todayNameEl = document.getElementById('analystTodayName');
+      if (todayNameEl) todayNameEl.textContent = summary.actualTodayName.toUpperCase();
+
+      const verdictBadgeEl = document.getElementById('analystTodayVerdictBadge');
+      const todayExpEl = document.getElementById('analystTodayExplanation');
+      const todayScoreEl = document.getElementById('analystTodayScore');
+
+      if (verdictBadgeEl && todayExpEl && todayScoreEl) {
+        todayScoreEl.textContent = `${summary.todayScore} / 100`;
+        if (summary.shouldBuyToday) {
+          verdictBadgeEl.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-2.5';
+          verdictBadgeEl.innerHTML = currentLang === 'km'
+            ? '<i class="fa-solid fa-circle-check"></i><span>គួរទិញថ្ងៃនេះ — លក្ខខណ្ឌអំណោយផល</span>'
+            : '<i class="fa-solid fa-circle-check"></i><span>YES — FAVORABLE TO BUY TODAY</span>';
+          todayExpEl.textContent = currentLang === 'km'
+            ? `ថ្ងៃនេះ (${summary.actualTodayName}) ស្ថិតក្នុងថ្ងៃជួញដូរស្ថាប័នល្អ ហើយតម្លៃឈរលើ SMA 20 & EMA 50។ អាចចូលទិញក្នុងម៉ោង 12:00–16:00 UTC។`
+            : `Today (${summary.actualTodayName}) aligns with prime institutional liquidity and bullish MA structure. Look for pullback entries during 12:00–16:00 UTC.`;
+        } else {
+          verdictBadgeEl.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 mb-2.5';
+          verdictBadgeEl.innerHTML = currentLang === 'km'
+            ? '<i class="fa-solid fa-hand"></i><span>កុំទាន់ទិញថ្ងៃនេះ — រង់ចាំថ្ងៃល្អជាង</span>'
+            : '<i class="fa-solid fa-hand"></i><span>WAIT — DO NOT BUY TODAY</span>';
+          todayExpEl.textContent = currentLang === 'km'
+            ? `ទោះបីថ្ងៃនេះជា ${summary.actualTodayName} ក៏ដោយ ប៉ុន្តែតម្លៃ XAU/USD ($${goldPrice.toFixed(2)}) នៅក្រោម SMA 20 ក្រោមសម្ពាធធ្លាក់ចុះ។ គួររង់ចាំ ${summary.bestTargetKm} ឬទាល់តែតម្លៃឡើងផុត SMA 20។`
+            : `Although today is ${summary.actualTodayName}, XAU/USD ($${goldPrice.toFixed(2)}) remains below SMA 20 under bearish pressure. Wait for ${summary.bestTargetEn} or a confirmed SMA 20 reclaim.`;
+        }
+      }
+
+      // Update Which Day Card
+      const bestTitleEl = document.getElementById('analystBestDayTitle');
+      const bestTagEl = document.getElementById('analystBestDayTag');
+      const whichReasonEl = document.getElementById('analystWhichDayReason');
+      const targetZoneEl = document.getElementById('analystTargetZone');
+      const triggerEl = document.getElementById('analystTrigger');
+
+      if (bestTitleEl) bestTitleEl.textContent = summary.bestTarget;
+      if (bestTagEl) {
+        bestTagEl.textContent = currentLang === 'km' ? 'អត្រាឈ្នះខ្ពស់បំផុត (78%–81%)' : 'HIGHEST WIN RATE (78%–81%)';
+      }
+      if (whichReasonEl) {
+        whichReasonEl.textContent = currentLang === 'km'
+          ? 'តាមស្ថិតិទីផ្សារមាស ថ្ងៃអង្គារ ដល់ ថ្ងៃពុធ (ម៉ោង 12:00–16:00 UTC) គឺជាពេលដែលធនាគារ និងស្ថាប័នធំៗបញ្ចេញទុនទិញច្បាស់លាស់បំផុត បន្ទាប់ពីថ្ងៃច័ន្ទបញ្ចប់ការរុញតម្លៃបញ្ឆោត។'
+          : 'Historically, Tuesday & Wednesday (12:00–16:00 UTC) produce the cleanest institutional Gold reversals and trend breakouts once Monday’s false moves clear out.';
+      }
+      if (targetZoneEl) targetZoneEl.textContent = '$3,750 – $3,762';
+      if (triggerEl) triggerEl.textContent = currentLang === 'km' ? 'ទៀន 1H បិទលើ SMA20' : '1H Close > SMA20';
+
+      // Render 5 Day Tabs
+      const tabsContainer = document.getElementById('dayAnalystTabs');
+      if (tabsContainer) {
+        tabsContainer.innerHTML = [1, 2, 3, 4, 5].map(idx => {
+          const p = DAY_ANALYST_PROFILES[idx];
+          const isSelected = selectedAnalystDayIdx === idx;
+          const isToday = summary.utcDay === idx;
+          const isBest = idx === 2 || idx === 3;
+          const label = currentLang === 'km' ? p.nameKm : p.nameEn;
+
+          return `
+            <button onclick="selectAnalystDay(${idx})" class="p-2 rounded-lg border text-left transition flex flex-col justify-between ${
+              isSelected
+                ? 'bg-[#182232] border-amber-500 shadow-md shadow-amber-500/10'
+                : 'bg-[#131722] border-[#2A2E39] hover:border-gray-600'
+            }">
+              <div class="flex items-center justify-between gap-1 w-full mb-1">
+                <span class="text-xs font-bold ${isSelected ? 'text-amber-400' : 'text-white'} truncate">${label}</span>
+                ${isToday ? `<span class="px-1 py-0.2 rounded text-[9px] font-bold bg-amber-500 text-black shrink-0">${t('todayChip')}</span>` : ''}
+              </div>
+              <div class="flex items-center justify-between w-full text-[10px] font-mono">
+                <span class="${isBest ? 'text-emerald-400 font-bold' : 'text-gray-400'}">${p.winRate}</span>
+                ${isBest ? `<span class="text-emerald-400">★</span>` : ''}
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Render Selected Day Deep-Dive Box
+      const detailBox = document.getElementById('selectedDayDetailBox');
+      if (detailBox) {
+        const sel = DAY_ANALYST_PROFILES[selectedAnalystDayIdx] || DAY_ANALYST_PROFILES[2];
+        const dayTitle = currentLang === 'km' ? sel.nameKm : sel.nameEn;
+        const verdictText = currentLang === 'km' ? sel.verdictKm : sel.verdictEn;
+        const liqText = currentLang === 'km' ? sel.liquidityKm : sel.liquidityEn;
+        const winText = currentLang === 'km' ? sel.windowKm : sel.windowEn;
+        const zoneText = currentLang === 'km' ? sel.zoneKm : sel.zoneEn;
+        const descText = currentLang === 'km' ? sel.descKm : sel.descEn;
+        const isPrime = sel.dayIdx === 2 || sel.dayIdx === 3;
+
+        detailBox.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-[#2A2E39]">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-white">${dayTitle}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${
+                isPrime
+                  ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                  : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+              }">${verdictText}</span>
+            </div>
+            <div class="flex items-center gap-3 text-[11px] font-mono">
+              <span class="text-gray-400">${t('winProbLabel')}: <strong class="text-emerald-400">${sel.winRate}</strong></span>
+              <span class="text-gray-400">${t('liquidityLabel')}: <strong class="text-white">${liqText}</strong></span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 text-[11px]">
+            <div class="bg-[#0B0E14] px-2.5 py-1.5 rounded border border-[#2A2E39]">
+              <span class="text-gray-400">${t('idealEntryWindowLabel')}:</span>
+              <span class="font-mono text-amber-400 font-semibold ml-1">${winText}</span>
+            </div>
+            <div class="bg-[#0B0E14] px-2.5 py-1.5 rounded border border-[#2A2E39]">
+              <span class="text-gray-400">${t('targetBuyZone')}:</span>
+              <span class="font-mono text-emerald-400 font-semibold ml-1">${zoneText}</span>
+            </div>
+          </div>
+          <p class="text-gray-300 leading-relaxed text-xs"><strong class="text-amber-400">${t('strategyNoteLabel')}:</strong> ${descText}</p>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 10. AI RISK & BUY/WAIT DECISION ENGINE + SESSION TIMING ADVISOR
+    // =========================================================================
+    let currentSignalState = {
+      verdict: 'WAIT / DO NOT BUY (High Risk)',
+      actionCode: 'WAIT',
+      riskLevel: 'HIGH RISK',
+      confidence: 82,
+      rsi: 31.4,
+      maAlignment: 'BEARISH',
+      reason: 'Price is trading below SMA 20 & EMA 50 under daily bearish pressure. Avoid buying until reversal confirmation.'
+    };
+    let lastAutoNotifiedCode = null;
+
+    function calculateRSI(candles, period = 14) {
+      if (candles.length <= period) return 50;
+      let gains = 0;
+      let losses = 0;
+      for (let i = candles.length - period; i < candles.length; i++) {
+        const diff = candles[i].close - candles[i - 1].close;
+        if (diff >= 0) gains += diff;
+        else losses -= diff;
+      }
+      if (losses === 0) return 100;
+      const rs = (gains / period) / (losses / period);
+      return 100 - (100 / (1 + rs));
+    }
+
+    function evaluateMarketSignal() {
+      const candles = candleStore['1D'] || candleStore[currentTimeframe];
+      if (!candles || candles.length < 20) return;
+
+      const sma20Arr = calcSMA(candles, 20);
+      const ema50Arr = calcEMA(candles, 50);
+      const latestSma20 = sma20Arr[sma20Arr.length - 1] || goldPrice;
+      const latestEma50 = ema50Arr[ema50Arr.length - 1] || goldPrice;
+      const rsi = calculateRSI(candles, 14);
+      const pct24h = ((goldPrice - goldOpen24h) / goldOpen24h) * 100;
+
+      const absMove = Math.abs(pct24h);
+      let riskLevel = currentLang === 'km' ? 'ហានិភ័យមធ្យម' : 'MODERATE';
+      let riskColor = 'text-amber-400';
+      if (absMove >= 2.5) {
+        riskLevel = currentLang === 'km' ? 'ហានិភ័យខ្ពស់បំផុត' : 'EXTREME RISK';
+        riskColor = 'text-rose-500';
+      } else if (absMove >= 1.5) {
+        riskLevel = currentLang === 'km' ? 'ហានិភ័យខ្ពស់' : 'HIGH RISK';
+        riskColor = 'text-rose-400';
+      } else if (absMove < 0.7) {
+        riskLevel = currentLang === 'km' ? 'ហានិភ័យទាប' : 'LOW RISK';
+        riskColor = 'text-emerald-400';
+      }
+
+      const aboveSma = goldPrice > latestSma20;
+      const aboveEma = goldPrice > latestEma50;
+      let maAlignment = currentLang === 'km' ? 'ចម្រុះ (MIXED)' : 'MIXED';
+      let maColor = 'text-amber-400';
+      if (aboveSma && aboveEma) {
+        maAlignment = currentLang === 'km' ? 'ឡើងថ្លៃ (BULLISH)' : 'BULLISH';
+        maColor = 'text-emerald-400';
+      } else if (!aboveSma && !aboveEma) {
+        maAlignment = currentLang === 'km' ? 'ចុះថ្លៃ (BEARISH)' : 'BEARISH';
+        maColor = 'text-rose-400';
+      }
+
+      let actionCode = 'WAIT';
+      let verdict = '';
+      let badgeClass = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+      let iconClass = 'fa-solid fa-hand';
+      let confidence = 80;
+      let reason = '';
+
+      if (aboveSma && aboveEma && rsi >= 48 && rsi <= 68) {
+        actionCode = 'BUY';
+        verdict = currentLang === 'km' ? 'ទិញ / សន្សំ (BUY)' : 'BUY / ACCUMULATE';
+        badgeClass = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+        iconClass = 'fa-solid fa-circle-arrow-up';
+        confidence = 84;
+        reason = currentLang === 'km'
+          ? `និន្នាការឡើងថ្លៃត្រូវបានបញ្ជាក់លើ SMA 20 ($${latestSma20.toFixed(1)}) និង EMA 50 ($${latestEma50.toFixed(1)}) ជាមួយ RSI (${rsi.toFixed(1)}) ល្អ។ អាចរកចំណុចចូលទិញបាន។`
+          : `Bullish trend confirmed above SMA 20 ($${latestSma20.toFixed(1)}) & EMA 50 ($${latestEma50.toFixed(1)}) with healthy RSI (${rsi.toFixed(1)}). Look for pullback entries.`;
+      } else if (!aboveSma && rsi <= 34) {
+        actionCode = 'CAUTION';
+        verdict = currentLang === 'km' ? 'ប្រុងប្រយ័ត្ន (តម្លៃទាបជ្រុល)' : 'SCALP / CAUTION (Oversold Watch)';
+        badgeClass = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30';
+        iconClass = 'fa-solid fa-triangle-exclamation';
+        confidence = 72;
+        reason = currentLang === 'km'
+          ? `RSI ស្ថិតក្នុងកម្រិតលក់ជ្រុល (${rsi.toFixed(1)}) ដូច្នេះអាចមានការងើបឡើងវិញខ្លីនៅក្បែរទម្រ $3,750 ប៉ុន្តែនិន្នាការធំនៅតែចុះថ្លៃក្រោម SMA 20 ($${latestSma20.toFixed(1)})។`
+          : `RSI is oversold (${rsi.toFixed(1)}), so a technical bounce may occur near $3,750 support, but primary daily trend remains bearish below SMA 20 ($${latestSma20.toFixed(1)}).`;
+      } else {
+        actionCode = 'WAIT';
+        verdict = currentLang === 'km' ? 'រង់ចាំ / កុំទាន់ទិញ (ហានិភ័យខ្ពស់)' : 'WAIT / DO NOT BUY (High Risk)';
+        badgeClass = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+        iconClass = 'fa-solid fa-hand';
+        confidence = 85;
+        reason = currentLang === 'km'
+          ? `តម្លៃ ($${goldPrice.toFixed(2)}) ស្ថិតនៅក្រោមខ្សែមធ្យមភាគសំខាន់ (SMA20: $${latestSma20.toFixed(1)}) ជាមួយសម្ពាធធ្លាក់ចុះ ${pct24h.toFixed(2)}%។ កុំទាន់ចូលទិញ រង់ចាំសញ្ញាបញ្ជាក់ការងើបឡើងសិន។`
+          : `Price ($${goldPrice.toFixed(2)}) is below key moving averages (SMA20: $${latestSma20.toFixed(1)}) with ${pct24h.toFixed(2)}% daily pressure. Do not catch falling knives; wait for 1D base confirmation.`;
+      }
+
+      currentSignalState = {
+        verdict,
+        actionCode,
+        riskLevel,
+        confidence,
+        rsi: Number(rsi.toFixed(1)),
+        maAlignment,
+        reason
+      };
+
+      const badgeEl = document.getElementById('aiVerdictBadge');
+      if (badgeEl) {
+        badgeEl.className = badgeClass;
+        badgeEl.innerHTML = `<i class="${iconClass}"></i><span>${verdict}</span>`;
+        document.getElementById('aiVerdictReason').textContent = reason;
+        document.getElementById('aiConfidence').textContent = `${confidence}%`;
+
+        const riskEl = document.getElementById('aiRiskLevel');
+        riskEl.className = `text-sm sm:text-base font-bold font-mono my-1 ${riskColor}`;
+        riskEl.textContent = riskLevel;
+        document.getElementById('aiDrawdownText').textContent = currentLang === 'km'
+          ? `បម្រែបម្រួល ២៤ម៉ោង: ${pct24h >= 0 ? '+' : ''}${pct24h.toFixed(2)}%`
+          : `24h Move: ${pct24h >= 0 ? '+' : ''}${pct24h.toFixed(2)}%`;
+
+        const rsiEl = document.getElementById('aiRsiValue');
+        const rsiLabel = rsi <= 30
+          ? (currentLang === 'km' ? 'ទាបជ្រុល' : 'Oversold')
+          : (rsi >= 70 ? (currentLang === 'km' ? 'ខ្ពស់ជ្រុល' : 'Overbought') : (currentLang === 'km' ? 'ធម្មតា' : 'Neutral'));
+        rsiEl.textContent = `${rsi.toFixed(1)} (${rsiLabel})`;
+
+        const maEl = document.getElementById('aiMaAlignment');
+        maEl.className = `text-sm sm:text-base font-bold font-mono my-1 ${maColor}`;
+        maEl.textContent = maAlignment;
+        document.getElementById('aiMaDetail').textContent = `SMA20: ${latestSma20.toFixed(0)} · EMA50: ${latestEma50.toFixed(0)}`;
+      }
+
+      const autoEnabled = document.getElementById('tgAutoSignal')?.checked;
+      if (autoEnabled && lastAutoNotifiedCode && lastAutoNotifiedCode !== actionCode) {
+        sendSignalReportToTelegram(true);
+      }
+      lastAutoNotifiedCode = actionCode;
+    }
+
+    function getTimingContext() {
+      const now = new Date();
+      const utcH = now.getUTCHours();
+      const utcM = now.getUTCMinutes();
+      const utcS = now.getUTCSeconds();
+      const utcDay = now.getUTCDay();
+
+      const isOverlap = utcH >= 12 && utcH < 16;
+      const isLondon = utcH >= 7 && utcH < 16;
+      const isNY = utcH >= 12 && utcH < 21;
+      const isAsian = utcH >= 0 && utcH < 8;
+
+      let activeSessionName = currentLang === 'km' ? 'ម៉ោងទីផ្សារស្ងប់ស្ងាត់' : 'Off-Peak / Late NY';
+      let sessionAdvice = currentLang === 'km'
+        ? 'ទំហំជួញដូរទាប គម្លាត Spread ធំ។ គួរជៀសវាងការបើកជើងថ្មី។'
+        : 'Low liquidity rollover window. Spreads widen; avoid new entries.';
+
+      if (utcDay === 0 || utcDay === 6) {
+        activeSessionName = currentLang === 'km' ? 'ទីផ្សារបិទចុងសប្តាហ៍' : 'Weekend Market Closed';
+        sessionAdvice = currentLang === 'km'
+          ? 'ទីផ្សារមាស XAU/USD បិទដំណើរការ។ សូមរៀបចំផែនការសម្រាប់ថ្ងៃអង្គារ–ព្រហស្បតិ៍។'
+          : 'Spot XAU/USD is closed. Prepare levels for Tuesday–Thursday prime sessions.';
+      } else if (isOverlap) {
+        activeSessionName = currentLang === 'km' ? 'ម៉ោង London–NY Overlap (ម៉ោងមាស)' : 'London–NY Overlap (PRIME WINDOW)';
+        sessionAdvice = currentLang === 'km'
+          ? 'សន្ទុះទីផ្សារមាសខ្លាំងបំផុត និង Spread តូចបំផុត។ ជាម៉ោងល្អបំផុតសម្រាប់ចូលទិញពេលមានសញ្ញាបញ្ជាក់។'
+          : 'Highest Gold liquidity & tightest spreads. Best window to join confirmed breakouts/reversals.';
+      } else if (isLondon) {
+        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារ London (សន្ទុះខ្ពស់)' : 'London Session (High Liquidity)';
+        sessionAdvice = currentLang === 'km'
+          ? 'ចាប់ផ្តើមមានសន្ទុះពីស្ថាប័នអឺរ៉ុប។ ប្រយ័ត្នចលនាបញ្ឆោតមុនម៉ោង 12:00 UTC។'
+          : 'Strong institutional trend initiation. Watch for fakeouts before 12:00 UTC overlap.';
+      } else if (isNY) {
+        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារ New York' : 'New York Session';
+        sessionAdvice = currentLang === 'km'
+          ? 'ប្រែប្រួលខ្លាំងតាមព័ត៌មានសេដ្ឋកិច្ចអាមេរិក (CPI/NFP/FOMC)។ ត្រូវដាក់ Stop Loss ជានិច្ច។'
+          : 'US macro data volatility (CPI/NFP/FOMC). Trade with strict Stop Loss.';
+      } else if (isAsian) {
+        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារអាស៊ី (តម្លៃដើរក្នុងប្រអប់)' : 'Asian Session (Range-Bound)';
+        sessionAdvice = currentLang === 'km'
+          ? 'ទីផ្សារដើរយឺតៗ។ ល្អសម្រាប់គូសកម្រិត S/R ប៉ុន្តែកុំទាន់ទិញដេញថ្លៃ។'
+          : 'Low volatility consolidation. Mark support/resistance levels; avoid breakout buys.';
+      }
+
+      const dayNamesEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayNamesKm = ['ថ្ងៃអាទិត្យ', 'ថ្ងៃច័ន្ទ', 'ថ្ងៃអង្គារ', 'ថ្ងៃពុធ', 'ថ្ងៃព្រហស្បតិ៍', 'ថ្ងៃសុក្រ', 'ថ្ងៃសៅរ៍'];
+      const currentDayName = currentLang === 'km' ? dayNamesKm[utcDay] : dayNamesEn[utcDay];
+      const isPrimeDay = utcDay >= 2 && utcDay <= 4;
+
+      return {
+        now, utcH, utcM, utcS, utcDay,
+        isOverlap, isLondon, isNY, isAsian,
+        activeSessionName, sessionAdvice,
+        currentDayName, isPrimeDay
+      };
+    }
+
+    function updateSessionClock() {
+      const ctx = getTimingContext();
+      const utcStr = `${String(ctx.utcH).padStart(2, '0')}:${String(ctx.utcM).padStart(2, '0')}:${String(ctx.utcS).padStart(2, '0')} UTC`;
+      const localStr = ctx.now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      const utcEl = document.getElementById('utcClock');
+      const localEl = document.getElementById('localClock');
+      const cdEl = document.getElementById('overlapCountdown');
+
+      if (utcEl) utcEl.textContent = utcStr;
+      if (localEl) localEl.textContent = localStr;
+
+      if (cdEl) {
+        if (ctx.utcDay === 0 || ctx.utcDay === 6) {
+          cdEl.textContent = currentLang === 'km' ? 'បើកថ្ងៃច័ន្ទ 00:00 UTC' : 'Opens Mon 00:00 UTC';
+          cdEl.className = 'text-gray-400 font-bold';
+        } else if (ctx.isOverlap) {
+          const remMins = (15 - ctx.utcH) * 60 + (59 - ctx.utcM);
+          cdEl.textContent = currentLang === 'km'
+            ? `កំពុងបើក (នៅសល់ ${Math.floor(remMins / 60)}ម៉ ${remMins % 60}ន)`
+            : `ACTIVE NOW (${Math.floor(remMins / 60)}h ${remMins % 60}m left)`;
+          cdEl.className = 'text-emerald-400 font-bold animate-pulse';
+        } else {
+          let targetH = 12;
+          let hoursUntil = targetH - ctx.utcH - 1;
+          if (ctx.utcH >= 16) hoursUntil = (24 - ctx.utcH) + 12 - 1;
+          const minsUntil = 59 - ctx.utcM;
+          cdEl.textContent = currentLang === 'km'
+            ? `ក្នុងរយៈពេល ${hoursUntil}ម៉ ${minsUntil}ន`
+            : `In ${hoursUntil}h ${minsUntil}m`;
+          cdEl.className = 'text-amber-400 font-bold';
+        }
+      }
+
+      const sessions = [
+        {
+          name: currentLang === 'km' ? 'វគ្គទីផ្សារអាស៊ី (Asian)' : 'Asian Session',
+          hours: '00:00 – 08:00 UTC',
+          active: ctx.isAsian && ctx.utcDay >= 1 && ctx.utcDay <= 5,
+          badge: currentLang === 'km' ? 'ប្រែប្រួលតិច' : 'LOW VOLATILITY',
+          badgeColor: 'text-sky-400 bg-sky-500/10 border-sky-500/25',
+          desc: currentLang === 'km'
+            ? 'តម្លៃដើរក្នុងប្រអប់តូច។ ល្អសម្រាប់គូសកម្រិត S/R ប៉ុន្តែជៀសវាងការទិញដេញថ្លៃ។'
+            : 'Range-bound accumulation. Good for marking S/R levels; avoid breakout buys.'
+        },
+        {
+          name: currentLang === 'km' ? 'វគ្គទីផ្សារ London' : 'London Session',
+          hours: '07:00 – 16:00 UTC',
+          active: ctx.isLondon && !ctx.isOverlap && ctx.utcDay >= 1 && ctx.utcDay <= 5,
+          badge: currentLang === 'km' ? 'ចាប់ផ្តើមនិន្នាការ' : 'TREND START',
+          badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/25',
+          desc: currentLang === 'km'
+            ? 'ទុនពីអឺរ៉ុបហូរចូលទីផ្សារ កំណត់ទិសដៅប្រចាំថ្ងៃដំបូង។'
+            : 'European liquidity enters. Sets initial daily direction & sweeps Asian highs/lows.'
+        },
+        {
+          name: currentLang === 'km' ? 'London–NY Overlap' : 'London–NY Overlap',
+          hours: '12:00 – 16:00 UTC',
+          active: ctx.isOverlap && ctx.utcDay >= 1 && ctx.utcDay <= 5,
+          badge: currentLang === 'km' ? '★ ម៉ោងល្អបំផុត' : '★ PRIME WINDOW',
+          badgeColor: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/35',
+          desc: currentLang === 'km'
+            ? 'ទំហំជួញដូរធំបំផុត និង Spread តូចបំផុត។ ជាម៉ោងល្អបំផុតដើម្បីចូលទិញមាស។'
+            : 'Highest volume & tightest spreads. BEST TIME to join confirmed Gold entries.'
+        },
+        {
+          name: currentLang === 'km' ? 'វគ្គទីផ្សារ New York' : 'New York Session',
+          hours: '12:00 – 21:00 UTC',
+          active: ctx.isNY && !ctx.isOverlap && ctx.utcDay >= 1 && ctx.utcDay <= 5,
+          badge: currentLang === 'km' ? 'ព័ត៌មានសេដ្ឋកិច្ចអាមេរិក' : 'US NEWS DRIVEN',
+          badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/25',
+          desc: currentLang === 'km'
+            ? 'រំញោចខ្លាំងដោយព័ត៌មានអាមេរិក (CPI, FOMC, NFP)។ ត្រូវប្រើ Stop Loss តឹងរ៉ឹង។'
+            : 'High volatility from US economic releases (CPI, FOMC, NFP). Use strict SL.'
+        }
+      ];
+
+      const sessContainer = document.getElementById('sessionCardsContainer');
+      if (sessContainer) {
+        sessContainer.innerHTML = sessions.map(s => `
+          <div class="rounded-xl p-3 border transition ${s.active ? 'bg-[#182030] border-amber-500 shadow-lg shadow-amber-500/10' : 'bg-[#0B0E14] border-[#2A2E39] opacity-80'}">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-xs font-bold text-white">${s.name}</span>
+              ${s.active ? '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>' : ''}
+            </div>
+            <div class="text-[11px] font-mono text-gray-400 mb-2">${s.hours}</div>
+            <span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold border ${s.badgeColor} mb-1.5">${s.badge}</span>
+            <p class="text-[11px] text-gray-400 leading-snug">${s.desc}</p>
+          </div>
+        `).join('');
+      }
+
+      const weekdays = [
+        {
+          dayIdx: 1,
+          label: currentLang === 'km' ? 'ថ្ងៃច័ន្ទ' : 'Monday',
+          tag: currentLang === 'km' ? 'រង់ចាំ / មិនច្បាស់' : 'CHOPPY / WAIT',
+          tagClass: 'text-amber-400 bg-amber-500/10',
+          note: currentLang === 'km' ? 'សន្ទុះទាប រង់ចាំទិសដៅសប្តាហ៍។' : 'Low liquidity; wait for weekly direction.'
+        },
+        {
+          dayIdx: 2,
+          label: currentLang === 'km' ? 'ថ្ងៃអង្គារ' : 'Tuesday',
+          tag: currentLang === 'km' ? '★ ថ្ងៃល្អបំផុត' : '★ BEST DAY',
+          tagClass: 'text-emerald-400 bg-emerald-500/15',
+          note: currentLang === 'km' ? 'និន្នាការស្ថាប័នច្បាស់លាស់។' : 'Clean institutional trends & breakouts.'
+        },
+        {
+          dayIdx: 3,
+          label: currentLang === 'km' ? 'ថ្ងៃពុធ' : 'Wednesday',
+          tag: currentLang === 'km' ? '★ ថ្ងៃល្អបំផុត' : '★ BEST DAY',
+          tagClass: 'text-emerald-400 bg-emerald-500/15',
+          note: currentLang === 'km' ? 'ទំហំជួញដូរកណ្តាលសប្តាហ៍ខ្ពស់។' : 'Peak mid-week volume & momentum.'
+        },
+        {
+          dayIdx: 4,
+          label: currentLang === 'km' ? 'ថ្ងៃព្រហស្បតិ៍' : 'Thursday',
+          tag: currentLang === 'km' ? '★ ថ្ងៃល្អបំផុត' : '★ BEST DAY',
+          tagClass: 'text-emerald-400 bg-emerald-500/15',
+          note: currentLang === 'km' ? 'បន្តនិន្នាការខ្លាំងក្លា។' : 'Strong trend continuation setups.'
+        },
+        {
+          dayIdx: 5,
+          label: currentLang === 'km' ? 'ថ្ងៃសុក្រ' : 'Friday',
+          tag: currentLang === 'km' ? 'ប្រយ័ត្ន / NFP' : 'CAUTION / NFP',
+          tagClass: 'text-rose-400 bg-rose-500/10',
+          note: currentLang === 'km' ? 'ការលក់យកចំណេញចុងសប្តាហ៍។' : 'Profit-taking spikes; close early.'
+        }
+      ];
+
+      const dayContainer = document.getElementById('weekdayMatrixContainer');
+      if (dayContainer) {
+        dayContainer.innerHTML = weekdays.map(d => {
+          const isToday = ctx.utcDay === d.dayIdx;
+          return `
+            <div class="p-2.5 rounded-lg border ${isToday ? 'bg-[#182030] border-amber-500' : 'bg-[#131722] border-[#2A2E39]'}">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold ${isToday ? 'text-amber-400' : 'text-white'}">${d.label}</span>
+                ${isToday ? `<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500 text-black font-bold">${t('todayChip')}</span>` : ''}
+              </div>
+              <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${d.tagClass} mb-1">${d.tag}</span>
+              <p class="text-[10px] text-gray-400 leading-tight">${d.note}</p>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // =========================================================================
+    // 11. TELEGRAM BOT API INTEGRATION (BILINGUAL MESSAGES)
+    // =========================================================================
+    const TG_STORAGE_KEY = 'aureus_telegram_config_v1';
+
+    function loadTelegramSettings() {
+      try {
+        const raw = localStorage.getItem(TG_STORAGE_KEY);
+        if (!raw) return;
+        const cfg = JSON.parse(raw);
+        if (cfg.botToken) document.getElementById('tgBotToken').value = cfg.botToken;
+        if (cfg.chatId) document.getElementById('tgChatId').value = cfg.chatId;
+        document.getElementById('tgAutoSignal').checked = !!cfg.autoSignal;
+        document.getElementById('tgIncludeTiming').checked = cfg.includeTiming !== false;
+        if (cfg.lastSent) {
+          document.getElementById('tgLastSent').textContent = `${t('lastSentPrefix')} ${cfg.lastSent}`;
+        }
+        updateTelegramStatusUI(Boolean(cfg.botToken && cfg.chatId));
+      } catch (e) {
+        console.error('Failed to load Telegram config:', e);
+      }
+    }
+
+    function saveTelegramSettings(silent = false) {
+      const botToken = document.getElementById('tgBotToken').value.trim();
+      const chatId = document.getElementById('tgChatId').value.trim();
+      const autoSignal = document.getElementById('tgAutoSignal').checked;
+      const includeTiming = document.getElementById('tgIncludeTiming').checked;
+
+      let existing = {};
+      try {
+        existing = JSON.parse(localStorage.getItem(TG_STORAGE_KEY) || '{}');
+      } catch (e) {}
+
+      const payload = {
+        ...existing,
+        botToken,
+        chatId,
+        autoSignal,
+        includeTiming
+      };
+
+      try {
+        localStorage.setItem(TG_STORAGE_KEY, JSON.stringify(payload));
+      } catch (e) {
+        console.error('Failed to save Telegram config:', e);
+      }
+
+      const configured = Boolean(botToken && chatId);
+      updateTelegramStatusUI(configured);
+      if (!silent) {
+        showToast(configured ? t('toastTgSaved') : t('toastTgIncomplete'));
+      }
+    }
+
+    function updateTelegramStatusUI(isConfigured) {
+      const badge = document.getElementById('tgConnectionBadge');
+      const headerStatus = document.getElementById('headerTgStatus');
+      if (isConfigured) {
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+        badge.textContent = t('tgStatusConnected');
+        if (headerStatus) headerStatus.textContent = t('tgConnectedShort');
+      } else {
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30';
+        badge.textContent = t('tgStatusNotConfigured');
+        if (headerStatus) headerStatus.textContent = t('navTelegram');
+      }
+    }
+
+    function toggleTokenVisibility() {
+      const input = document.getElementById('tgBotToken');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function scrollToTelegram() {
+      const el = document.getElementById('telegramPanel');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('tgBotToken').focus();
+      }
+    }
+
+    async function dispatchTelegramMessage(htmlText) {
+      const botToken = document.getElementById('tgBotToken').value.trim();
+      const chatId = document.getElementById('tgChatId').value.trim();
+
+      if (!botToken || !chatId) {
+        showToast(t('toastTgMissing'));
+        scrollToTelegram();
+        return false;
+      }
+
+      const url = `https://api.telegram.org/bot${encodeURIComponent(botToken)}/sendMessage`;
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: htmlText,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.ok) {
+          throw new Error(data.description || 'Telegram API rejected the request');
+        }
+
+        const stamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.getElementById('tgLastSent').textContent = `${t('lastSentPrefix')} ${stamp}`;
+        try {
+          const existing = JSON.parse(localStorage.getItem(TG_STORAGE_KEY) || '{}');
+          existing.lastSent = stamp;
+          localStorage.setItem(TG_STORAGE_KEY, JSON.stringify(existing));
+        } catch (e) {}
+
+        updateTelegramStatusUI(true);
+        return true;
+      } catch (err) {
+        console.error('Telegram send error:', err);
+        const badge = document.getElementById('tgConnectionBadge');
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+        badge.textContent = t('tgStatusApiError');
+        showToast(`Telegram Error: ${err.message}`);
+        return false;
+      }
+    }
+
+    async function sendTestTelegramAlert() {
+      saveTelegramSettings(true);
+      const timing = getTimingContext();
+      const daySummary = getDayAnalystSummary();
+      const msg = currentLang === 'km'
+        ? [
+            `🔔 <b>AUREUS GOLD TERMINAL — សាកល្បងការភ្ជាប់</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `✅ <b>ស្ថានភាព៖</b> បានភ្ជាប់ជោគជ័យ`,
+            `💰 <b>តម្លៃមាស XAU/USD៖</b> $${goldPrice.toFixed(2)}`,
+            `📊 <b>ការសម្រេចចិត្តបច្ចុប្បន្ន៖</b> ${currentSignalState.verdict}`,
+            `📅 <b>តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណា?៖</b> ${daySummary.shouldBuyToday ? 'អាចទិញថ្ងៃនេះបាន' : 'រង់ចាំ ' + daySummary.bestTargetKm}`,
+            `⏰ <b>វគ្គទីផ្សារ៖</b> ${timing.activeSessionName}`
+          ].join('\n')
+        : [
+            `🔔 <b>AUREUS GOLD TERMINAL — TEST CONNECTION</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `✅ <b>Status:</b> Connected to Web App`,
+            `💰 <b>Live XAU/USD:</b> $${goldPrice.toFixed(2)}`,
+            `📊 <b>Current Verdict:</b> ${currentSignalState.verdict}`,
+            `📅 <b>Buy Today vs Which Day:</b> ${daySummary.shouldBuyToday ? 'Buy Today' : 'Wait for ' + daySummary.bestTargetEn}`,
+            `⏰ <b>Session:</b> ${timing.activeSessionName}`
+          ].join('\n');
+
+      const ok = await dispatchTelegramMessage(msg);
+      if (ok) showToast(t('toastTgTestSent'));
+    }
+
+    async function sendDayAnalystToTelegram() {
+      const summary = getDayAnalystSummary();
+      const sel = DAY_ANALYST_PROFILES[selectedAnalystDayIdx || summary.effectiveTodayIdx];
+      const msg = currentLang === 'km'
+        ? [
+            `📅 <b>អ្នកវិភាគ៖ តើគួរទិញមាសថ្ងៃនេះ ឬថ្ងៃណាល្អ? (XAU/USD)</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `💰 <b>តម្លៃមាសផ្ទាល់៖</b> $${goldPrice.toFixed(2)}`,
+            `📌 <b>ថ្ងៃនេះ (${summary.actualTodayName})៖</b> ${summary.shouldBuyToday ? '🟢 គួរទិញថ្ងៃនេះ' : '🔴 កុំទាន់ទិញថ្ងៃនេះ'} (ពិន្ទុ ${summary.todayScore}/100)`,
+            `🏆 <b>ថ្ងៃល្អបំផុតសម្រាប់ទិញ៖</b> <b>${summary.bestTargetKm}</b>`,
+            `🎯 <b>តំបន់គោលដៅទិញ៖</b> <code>$3,750 – $3,762</code> (ទៀន 1H បិទលើ SMA20)`,
+            `⏰ <b>ម៉ោងចូលទិញល្អបំផុត៖</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            ``,
+            `🔍 <b>វិភាគលម្អិត (${sel.nameKm})៖</b> ${sel.descKm}`
+          ].join('\n')
+        : [
+            `📅 <b>XAU/USD ANALYST: BUY TODAY VS. WHICH DAY?</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `💰 <b>Live Spot Gold:</b> $${goldPrice.toFixed(2)}`,
+            `📌 <b>Today (${summary.actualTodayName}):</b> ${summary.shouldBuyToday ? '🟢 BUY TODAY' : '🔴 WAIT / DO NOT BUY TODAY'} (Score: ${summary.todayScore}/100)`,
+            `🏆 <b>Best Day to Buy:</b> <b>${summary.bestTargetEn}</b>`,
+            `🎯 <b>Target Buy Zone:</b> <code>$3,750 – $3,762</code> (Trigger: 1H Close > SMA20)`,
+            `⏰ <b>Prime Entry Window:</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            ``,
+            `🔍 <b>Selected Day (${sel.nameEn} · ${sel.winRate} Win Rate):</b> ${sel.descEn}`
+          ].join('\n');
+
+      const ok = await dispatchTelegramMessage(msg);
+      if (ok) showToast(t('toastTgDayAnalystSent'));
+    }
+
+    async function sendSignalReportToTelegram(isAuto = false) {
+      const entry = parseFloat(document.getElementById('calcEntry').value) || goldPrice;
+      const sl = parseFloat(document.getElementById('calcSL').value) || (goldPrice - 16.5);
+      const tp = parseFloat(document.getElementById('calcTP').value) || (goldPrice + 42.0);
+      const lots = document.getElementById('resLots').textContent;
+      const rr = document.getElementById('resRR').textContent;
+      const includeTiming = document.getElementById('tgIncludeTiming').checked;
+      const timing = getTimingContext();
+      const daySummary = getDayAnalystSummary();
+
+      const verdictEmoji = currentSignalState.actionCode === 'BUY' ? '🟢' : (currentSignalState.actionCode === 'CAUTION' ? '🟡' : '🔴');
+
+      const lines = currentLang === 'km'
+        ? [
+            `${isAuto ? '🚨 <b>ការជូនដំណឹងផ្លាស់ប្តូរសញ្ញាស្វ័យប្រវត្តិ</b>' : '📊 <b>របាយការណ៍វិភាគហានិភ័យមាស XAU/USD</b>'}`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `💰 <b>តម្លៃមាសផ្ទាល់៖</b> $${goldPrice.toFixed(2)}`,
+            `${verdictEmoji} <b>តើគួរទិញឬអត់?៖</b> <b>${currentSignalState.verdict}</b>`,
+            `⚠️ <b>ហានិភ័យ៖</b> ${currentSignalState.riskLevel} (ទំនុកចិត្ត៖ ${currentSignalState.confidence}%)`,
+            `📈 <b>សូចនាករ៖</b> និន្នាការ ${currentSignalState.maAlignment} | RSI(14): ${currentSignalState.rsi}`,
+            ``,
+            `🎯 <b>គម្រោងគ្រប់គ្រងហានិភ័យ៖</b>`,
+            `• Entry: <code>$${entry.toFixed(2)}</code> | SL: <code>$${sl.toFixed(2)}</code> | TP: <code>$${tp.toFixed(2)}</code>`,
+            `• ទំហំ Lot: <b>${lots}</b> (R:R <b>${rr}</b>)`,
+            ``,
+            `💡 <b>ការវិភាគ៖</b> ${currentSignalState.reason}`
+          ]
+        : [
+            `${isAuto ? '🚨 <b>AUTO SIGNAL CHANGE ALERT</b>' : '📊 <b>XAU/USD GOLD RISK &amp; ENTRY REPORT</b>'}`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `💰 <b>Spot Gold Price:</b> $${goldPrice.toFixed(2)}`,
+            `${verdictEmoji} <b>Should You Buy?:</b> <b>${currentSignalState.verdict}</b>`,
+            `⚠️ <b>Volatility Risk:</b> ${currentSignalState.riskLevel} (Confidence: ${currentSignalState.confidence}%)`,
+            `📈 <b>Indicators:</b> ${currentSignalState.maAlignment} Trend | RSI(14): ${currentSignalState.rsi}`,
+            ``,
+            `🎯 <b>Risk Calculator Setup:</b>`,
+            `• Entry: <code>$${entry.toFixed(2)}</code> | SL: <code>$${sl.toFixed(2)}</code> | TP: <code>$${tp.toFixed(2)}</code>`,
+            `• Lot Size: <b>${lots}</b> (R:R <b>${rr}</b>)`,
+            ``,
+            `💡 <b>Analysis:</b> ${currentSignalState.reason}`
+          ];
+
+      if (includeTiming) {
+        if (currentLang === 'km') {
+          lines.push(
+            ``,
+            `⏰ <b>ការណែនាំថ្ងៃ និងម៉ោងទិញ៖</b>`,
+            `• ថ្ងៃនេះ៖ ${timing.currentDayName} (${timing.activeSessionName})`,
+            `• ថ្ងៃល្អបំផុត៖ <b>${daySummary.bestTargetKm}</b>`,
+            `• ម៉ោងមាស៖ <b>12:00 – 16:00 UTC</b> (London–NY Overlap)`
+          );
+        } else {
+          lines.push(
+            ``,
+            `⏰ <b>Market Timing &amp; Day Advisor:</b>`,
+            `• Now: ${timing.currentDayName} (${timing.activeSessionName})`,
+            `• Best Day to Buy: <b>${daySummary.bestTargetEn}</b>`,
+            `• Prime Entry Window: <b>12:00 – 16:00 UTC</b> (London–NY Overlap)`
+          );
+        }
+      }
+
+      const ok = await dispatchTelegramMessage(lines.join('\n'));
+      if (ok) showToast(t('toastTgSignalSent'));
+    }
+
+    async function sendTimingBriefingToTelegram() {
+      const timing = getTimingContext();
+      const msg = currentLang === 'km'
+        ? [
+            `🗓 <b>កាលវិភាគថ្ងៃ និងម៉ោងជួញដូរមាស (XAU/USD)</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `🕒 <b>ម៉ោងសកល UTC៖</b> ${String(timing.utcH).padStart(2, '0')}:${String(timing.utcM).padStart(2, '0')} UTC (${timing.currentDayName})`,
+            `🌐 <b>វគ្គទីផ្សារបច្ចុប្បន្ន៖</b> ${timing.activeSessionName}`,
+            `📌 <b>ការណែនាំ៖</b> ${timing.sessionAdvice}`,
+            ``,
+            `🏆 <b>ពេលវេលាល្អបំផុតដើម្បីចូលទីផ្សារ៖</b>`,
+            `• <b>ថ្ងៃល្អបំផុត៖</b> ថ្ងៃអង្គារ, ថ្ងៃពុធ, ថ្ងៃព្រហស្បតិ៍`,
+            `• <b>ម៉ោងមាស៖</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            `• <b>គួរជៀសវាង៖</b> ព្រឹកថ្ងៃច័ន្ទ និងល្ងាចថ្ងៃសុក្រ`,
+            ``,
+            `💰 <b>តម្លៃមាសបច្ចុប្បន្ន៖</b> $${goldPrice.toFixed(2)} (${currentSignalState.verdict})`
+          ].join('\n')
+        : [
+            `🗓 <b>GOLD (XAU/USD) TIMING &amp; SESSION BRIEFING</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `🕒 <b>Current UTC:</b> ${String(timing.utcH).padStart(2, '0')}:${String(timing.utcM).padStart(2, '0')} UTC (${timing.currentDayName})`,
+            `🌐 <b>Active Session:</b> ${timing.activeSessionName}`,
+            `📌 <b>Current Advice:</b> ${timing.sessionAdvice}`,
+            ``,
+            `🏆 <b>Optimal Schedule to Join Market:</b>`,
+            `• <b>Best Days:</b> Tuesday, Wednesday, Thursday`,
+            `• <b>Prime Hours:</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            `• <b>Avoid:</b> Monday early chop &amp; Friday late profit-taking`,
+            ``,
+            `💰 <b>Live Gold:</b> $${goldPrice.toFixed(2)} (${currentSignalState.verdict})`
+          ].join('\n');
+
+      const ok = await dispatchTelegramMessage(msg);
+      if (ok) showToast(t('toastTgTimingSent'));
+    }
+
+    // =========================================================================
+    // 12. INITIALIZATION ON WINDOW LOAD
+    // =========================================================================
+    window.addEventListener('resize', resizeCanvas);
+    window.onload = function () {
+      loadTelegramSettings();
+      setLanguage(currentLang);
+      resizeCanvas();
+      renderWatchlist();
+      calculateRisk();
+      evaluateMarketSignal();
+      renderDayAnalyst();
+      updateSessionClock();
+      renderJournal();
+      setInterval(updateMarketTick, 1500);
+      setInterval(updateSessionClock, 1000);
+    };
+  </script>
+</body>
+</html>
