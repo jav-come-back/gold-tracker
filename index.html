@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XAU/USD Gold Market Tracker & Trading Terminal</title>
+  <title>XAU/USD Gold Market Tracker & Cambodia Live Gold Terminal</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter, Noto Sans Khmer & JetBrains Mono -->
@@ -39,7 +39,6 @@
     }
   </script>
   <style>
-    /* Custom scrollbar for sleek institutional terminal feel */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -85,28 +84,48 @@
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> <span data-i18n="liveFeed">LIVE FEED</span>
             </span>
           </div>
-          <p class="text-[11px] text-gray-400 hidden sm:block" data-i18n="brandSubtitle">XAU/USD Institutional Market Analytics & Risk Suite</p>
+          <p class="text-[11px] text-gray-400 hidden sm:block" data-i18n="brandSubtitle">XAU/USD Institutional Market & Cambodia Live Gold Suite</p>
         </div>
       </div>
 
-      <!-- Center Live Ticker Quick Stats -->
-      <div class="flex items-center gap-3 sm:gap-5 bg-[#0B0E14] px-3 py-1.5 rounded-xl border border-[#2A2E39]">
+      <!-- Center Live Ticker Quick Stats + Live Cambodia Time -->
+      <div class="flex flex-wrap items-center gap-3 sm:gap-4 bg-[#0B0E14] px-3 py-1.5 rounded-xl border border-[#2A2E39]">
         <div>
           <div class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold" data-i18n="spotGold">XAU / USD Spot</div>
           <div class="flex items-baseline gap-2">
-            <span id="headerPrice" class="font-mono text-base sm:text-xl font-bold text-white tabular-nums">3,771.46</span>
-            <span id="headerChange" class="font-mono text-xs font-semibold text-[#F23645] tabular-nums">-77.47 (-2.01%)</span>
+            <span id="headerPrice" class="font-mono text-base sm:text-xl font-bold text-white tabular-nums">3,538.26</span>
+            <span id="headerChange" class="font-mono text-xs font-semibold text-[#F23645] tabular-nums">-87.05 (-2.40%)</span>
           </div>
         </div>
+
+        <div class="hidden sm:block h-7 w-[1px] bg-[#2A2E39]"></div>
+
+        <!-- NEW: Live Cambodia Market Quick Pill -->
+        <div onclick="scrollToCambodiaMarket()" class="cursor-pointer group" title="Jump to Cambodia Market Buy & Sell">
+          <div class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold flex items-center gap-1">
+            <span>🇰🇭</span> <span data-i18n="khHeaderLabel">KH 24K (1 តម្លឹង)</span>
+          </div>
+          <div class="font-mono text-xs text-gray-200 tabular-nums group-hover:text-amber-300 transition">
+            <span class="text-gray-400 text-[10px]" data-i18n="buyShort">B:</span><span id="headerKhBuy" class="text-emerald-400 font-bold">$4,251</span>
+            <span class="text-gray-500 mx-0.5">/</span>
+            <span class="text-gray-400 text-[10px]" data-i18n="sellShort">S:</span><span id="headerKhSell" class="text-rose-400 font-bold">$4,281</span>
+          </div>
+        </div>
+
         <div class="hidden md:block h-7 w-[1px] bg-[#2A2E39]"></div>
+
+        <!-- NEW: Live Cambodia Current Time & Date -->
         <div class="hidden md:block">
-          <div class="text-[10px] uppercase tracking-wider text-gray-400" data-i18n="highLow24h">24h High / Low</div>
-          <div class="font-mono text-xs text-gray-200 tabular-nums">
-            <span id="headerHigh" class="text-emerald-400">3,849.20</span> / <span id="headerLow" class="text-rose-400">3,768.90</span>
+          <div class="text-[10px] uppercase tracking-wider text-sky-400 font-semibold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span data-i18n="khLiveTimeLabel">CAMBODIA LIVE (ICT)</span>
           </div>
+          <div class="font-mono text-xs text-white font-bold tabular-nums" id="headerKhClock">--:--:--</div>
+          <div class="font-mono text-[10px] text-gray-400 tabular-nums" id="headerKhDate">Nov 21, 2026</div>
         </div>
-        <div class="hidden lg:block h-7 w-[1px] bg-[#2A2E39]"></div>
-        <div class="hidden lg:flex items-center gap-2">
+
+        <div class="hidden xl:block h-7 w-[1px] bg-[#2A2E39]"></div>
+        <div class="hidden xl:flex items-center gap-2">
           <div>
             <div class="text-[10px] uppercase tracking-wider text-gray-400" data-i18n="aiMarketBias">AI Market Bias</div>
             <span id="sentimentBadge" class="inline-block mt-0.5 px-2 py-0.5 rounded text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
@@ -116,7 +135,7 @@
         </div>
       </div>
 
-      <!-- Right Actions: Language Switcher, Day Analyst Jump, Telegram, Pause, GitHub -->
+      <!-- Right Actions: Language Switcher, Cambodia Market, Day Analyst, Telegram, Pause, GitHub -->
       <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
         <!-- Bilingual Switcher (EN | ខ្មែរ) -->
         <div class="flex items-center bg-[#0B0E14] p-0.5 rounded-lg border border-[#2A2E39]" role="group" aria-label="Language Switcher">
@@ -128,10 +147,16 @@
           </button>
         </div>
 
+        <!-- NEW Quick Jump to Cambodia Gold Market -->
+        <button onclick="scrollToCambodiaMarket()" class="px-2.5 sm:px-3 py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 text-xs font-semibold border border-amber-500/35 transition flex items-center gap-1.5" title="Cambodia Gold Market Buy & Sell">
+          <span>🇰🇭</span>
+          <span class="hidden md:inline" data-i18n="navCambodiaMarket">Cambodia Gold</span>
+        </button>
+
         <!-- Quick Jump to Day Analyst -->
         <button onclick="scrollToDayAnalyst()" class="px-2.5 sm:px-3 py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold border border-emerald-500/30 transition flex items-center gap-1.5" title="Buy Today vs Which Day Analyst">
           <i class="fa-solid fa-calendar-check text-sm"></i>
-          <span class="hidden md:inline" data-i18n="navDayAnalyst">Day Analyst</span>
+          <span class="hidden lg:inline" data-i18n="navDayAnalyst">Day Analyst</span>
         </button>
 
         <!-- Telegram Quick Jump -->
@@ -203,10 +228,10 @@
         <div class="px-4 py-1.5 border-b border-[#2A2E39]/60 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono bg-[#131722]">
           <div class="flex flex-wrap items-center gap-3">
             <span class="font-bold text-white"><span data-i18n="chartLegendGold">GOLD</span> · <span id="legendTf">1D</span> · SPOT</span>
-            <span class="text-gray-400">O <span id="ohlcO" class="text-gray-200">3,848.90</span></span>
-            <span class="text-gray-400">H <span id="ohlcH" class="text-emerald-400">3,852.10</span></span>
-            <span class="text-gray-400">L <span id="ohlcL" class="text-rose-400">3,768.90</span></span>
-            <span class="text-gray-400">C <span id="ohlcC" class="text-white font-semibold">3,771.46</span></span>
+            <span class="text-gray-400">O <span id="ohlcO" class="text-gray-200">3,622.85</span></span>
+            <span class="text-gray-400">H <span id="ohlcH" class="text-emerald-400">3,637.21</span></span>
+            <span class="text-gray-400">L <span id="ohlcL" class="text-rose-400">3,502.85</span></span>
+            <span class="text-gray-400">C <span id="ohlcC" class="text-white font-semibold">3,538.26</span></span>
           </div>
           <div class="flex items-center gap-3 text-[11px]">
             <span class="flex items-center gap-1 text-sky-400"><span class="w-2 h-0.5 bg-sky-400 inline-block"></span> SMA20</span>
@@ -219,7 +244,7 @@
           <canvas id="goldChart"></canvas>
           <!-- Crosshair Tooltip -->
           <div id="chartTooltip" class="pointer-events-none hidden absolute top-3 left-3 bg-[#131722]/95 border border-[#2A2E39] rounded-lg px-3 py-2 text-xs font-mono shadow-xl backdrop-blur-sm z-10">
-            <div id="ttDate" class="text-gray-400 text-[10px] mb-1">2026-11-19</div>
+            <div id="ttDate" class="text-gray-400 text-[10px] mb-1">2026-11-21</div>
             <div class="grid grid-cols-2 gap-x-4 gap-y-0.5">
               <span class="text-gray-400" data-i18n="ttOpen">Open:</span><span id="ttO" class="text-right text-white">0.00</span>
               <span class="text-gray-400" data-i18n="ttHigh">High:</span><span id="ttH" class="text-right text-emerald-400">0.00</span>
@@ -230,7 +255,127 @@
         </div>
       </section>
 
-      <!-- 2. NEW FEATURE: Buy Today vs. Which Day Analyst ("តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?") -->
+      <!-- ========================================================================= -->
+      <!-- NEW OPTION: CAMBODIA GOLD MARKET (PHNOM PENH LIVE BUY & SELL + LIVE TIME) -->
+      <!-- ========================================================================= -->
+      <section id="cambodiaMarketSection" class="bg-[#131722] rounded-xl border border-amber-500/50 p-4 sm:p-5 shadow-xl relative overflow-hidden">
+        <!-- Top Header with Live Cambodia Clock & Telegram Button -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#2A2E39]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/25 to-rose-500/20 border border-amber-500/40 flex items-center justify-center text-xl shrink-0">
+              🇰🇭
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-white font-bold text-sm sm:text-base" data-i18n="khMarketTitle">Cambodia Gold Market — Live Buy &amp; Sell (Phnom Penh)</h2>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span data-i18n="khLiveBadge">LIVE CAMBODIA</span>
+                </span>
+              </div>
+              <p class="text-xs text-gray-400" data-i18n="khMarketSubtitle">Real-time Phnom Penh bullion &amp; jewelry shop Buy/Sell rates (Damlung / Chi / Gram) in USD &amp; KHR</p>
+            </div>
+          </div>
+
+          <!-- Live Phnom Penh Time Box & Telegram Share -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="bg-[#0B0E14] border border-[#2A2E39] rounded-xl px-3 py-1.5 font-mono text-xs">
+              <div class="text-[10px] text-amber-400 font-semibold flex items-center gap-1">
+                <i class="fa-regular fa-clock"></i> <span data-i18n="khSectionClockTitle">PHNOM PENH TIME (UTC+7)</span>
+              </div>
+              <div class="text-white font-bold text-sm tabular-nums" id="khSectionClock">00:00:00</div>
+              <div class="text-[10px] text-gray-400" id="khSectionDate">Saturday, Nov 21, 2026</div>
+            </div>
+
+            <button onclick="sendCambodiaMarketToTelegram()" class="px-3.5 py-2.5 rounded-lg bg-[#0088cc] hover:bg-[#0077b5] text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-[#0088cc]/20">
+              <i class="fa-brands fa-telegram text-sm"></i>
+              <span data-i18n="sendKhTgBtn">Send KH Rates to Telegram</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Controls Row: Purity Selector, Shop Spread, Exchange Rate -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4 bg-[#0B0E14] p-3 rounded-xl border border-[#2A2E39]">
+          <!-- Purity Selector -->
+          <div class="sm:col-span-5">
+            <label class="block text-[11px] text-gray-400 font-medium mb-1.5" data-i18n="khPurityLabel">Gold Purity / Karat (ប្រភេទទឹកមាស)</label>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button onclick="setKhPurity('24K')" id="khPur24K" class="py-1.5 px-2 rounded-lg text-xs font-bold bg-amber-500 text-black transition">
+                24K (ទឹក១០)
+              </button>
+              <button onclick="setKhPurity('22K')" id="khPur22K" class="py-1.5 px-2 rounded-lg text-xs font-bold bg-[#131722] text-gray-300 border border-[#2A2E39] hover:border-amber-500/40 transition">
+                22K (91.6%)
+              </button>
+              <button onclick="setKhPurity('18K')" id="khPur18K" class="py-1.5 px-2 rounded-lg text-xs font-bold bg-[#131722] text-gray-300 border border-[#2A2E39] hover:border-amber-500/40 transition">
+                18K (ទឹក៧.៥)
+              </button>
+            </div>
+          </div>
+
+          <!-- Local Shop Spread / Margin ($ per Damlung) -->
+          <div class="sm:col-span-4">
+            <label class="block text-[11px] text-gray-400 font-medium mb-1.5" data-i18n="khSpreadLabel">Phnom Penh Shop Spread ($ / Damlung)</label>
+            <div class="flex items-center gap-1.5">
+              <input type="number" id="khShopSpread" value="30" min="0" max="200" step="5" oninput="renderCambodiaMarket()" class="w-full bg-[#131722] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-1.5 text-xs font-mono text-white outline-none">
+              <span class="text-[11px] font-mono text-gray-400 shrink-0">USD</span>
+            </div>
+          </div>
+
+          <!-- USD/KHR Exchange Rate -->
+          <div class="sm:col-span-3">
+            <label class="block text-[11px] text-gray-400 font-medium mb-1.5" data-i18n="khFxLabel">USD / KHR Rate</label>
+            <div class="flex items-center gap-1.5">
+              <input type="number" id="khUsdKhrRate" value="4075" min="3800" max="4500" step="5" oninput="renderCambodiaMarket()" class="w-full bg-[#131722] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-1.5 text-xs font-mono text-amber-400 font-bold outline-none">
+              <span class="text-[11px] font-mono text-gray-400 shrink-0">៛</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Highlight Cards: 1 Damlung (១ តម្លឹង) & 1 Chi (១ ជី) Buy vs Sell -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-4" id="khHighlightCards">
+          <!-- Populated dynamically by renderCambodiaMarket() -->
+        </div>
+
+        <!-- Full Cambodia Market Buy & Sell Table (Damlung, Chi, Gram, Ounce) -->
+        <div class="overflow-x-auto bg-[#0B0E14] rounded-xl border border-[#2A2E39]">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-[#2A2E39] text-[11px] uppercase text-gray-400 bg-[#161B26]">
+                <th class="py-2.5 px-3 font-semibold" data-i18n="khColUnit">Weight Unit (ខ្នាតទម្ងន់)</th>
+                <th class="py-2.5 px-3 font-semibold text-right text-emerald-400" data-i18n="khColShopBuy">Market Buy (ទិញចូល)</th>
+                <th class="py-2.5 px-3 font-semibold text-right text-rose-400" data-i18n="khColShopSell">Market Sell (លក់ចេញ)</th>
+                <th class="py-2.5 px-3 font-semibold text-right text-amber-400" data-i18n="khColKhrSell">Sell in KHR (ប្រាក់រៀល)</th>
+              </tr>
+            </thead>
+            <tbody id="khMarketTableBody" class="divide-y divide-[#2A2E39]/60 font-mono tabular-nums">
+              <!-- Populated dynamically by renderCambodiaMarket() -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quick Cambodia Gold Weight Converter -->
+        <div class="mt-3.5 bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-scale-balanced"></i>
+              <span data-i18n="khQuickCalcTitle">Quick Cambodia Gold Calculator:</span>
+            </span>
+            <input type="number" id="khCalcQty" value="1" min="0.01" step="0.1" oninput="renderCambodiaMarket()" class="w-20 bg-[#131722] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-2.5 py-1 text-xs font-mono text-white outline-none">
+            <select id="khCalcUnit" onchange="renderCambodiaMarket()" class="bg-[#131722] border border-[#2A2E39] rounded-lg px-2.5 py-1 text-xs text-white outline-none">
+              <option value="damlung">Damlung / Tael (តម្លឹង · 37.5g)</option>
+              <option value="chi">Chi (ជី · 3.75g)</option>
+              <option value="gram">Gram (ក្រាម · 1g)</option>
+              <option value="ounce">Troy Ounce (អោន · 31.1035g)</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4 text-xs font-mono" id="khCalcOutput">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Buy Today vs. Which Day Analyst ("តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?") -->
       <section id="dayAnalystSection" class="bg-[#131722] rounded-xl border border-amber-500/40 p-4 sm:p-5 shadow-xl relative overflow-hidden">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#2A2E39]">
           <div class="flex items-center gap-2.5">
@@ -259,7 +404,7 @@
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold" data-i18n="todayStatusLabel">TODAY'S ENTRY EVALUATION</span>
-                <span id="analystTodayName" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-mono text-xs font-bold">THURSDAY</span>
+                <span id="analystTodayName" class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-mono text-xs font-bold">SATURDAY</span>
               </div>
 
               <div id="analystTodayVerdictBadge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 mb-2.5">
@@ -268,7 +413,7 @@
               </div>
 
               <p id="analystTodayExplanation" class="text-xs text-gray-300 leading-relaxed">
-                Even though Thursday offers strong institutional liquidity, XAU/USD is currently below SMA 20 with daily bearish pressure. Wait for a confirmed bounce or next Tuesday's setup.
+                Spot XAU/USD is below SMA 20 with daily bearish pressure. Wait for a confirmed bounce or Tuesday's setup.
               </p>
             </div>
 
@@ -283,7 +428,7 @@
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-[11px] uppercase tracking-wider text-emerald-400 font-semibold" data-i18n="whichDayLabel">WHICH DAY SHOULD WE BUY?</span>
-                <span class="text-[11px] font-mono text-gray-400" data-i18n="primeWindowShort">12:00–16:00 UTC</span>
+                <span class="text-[11px] font-mono text-gray-400" data-i18n="primeWindowShort">19:00–23:00 KH (12–16 UTC)</span>
               </div>
 
               <div class="flex items-baseline gap-2.5 mb-2">
@@ -301,7 +446,7 @@
             <div class="mt-3 pt-2.5 border-t border-[#2A2E39] grid grid-cols-2 gap-2 text-xs font-mono">
               <div>
                 <span class="text-gray-400 font-sans block text-[10px]" data-i18n="targetBuyZone">Target Buy Zone:</span>
-                <span id="analystTargetZone" class="text-emerald-400 font-bold">$3,750 – $3,760</span>
+                <span id="analystTargetZone" class="text-emerald-400 font-bold">$3,505 – $3,525</span>
               </div>
               <div class="text-right">
                 <span class="text-gray-400 font-sans block text-[10px]" data-i18n="confirmationTrigger">Confirmation Trigger:</span>
@@ -321,15 +466,8 @@
             <span class="text-[11px] text-gray-400" data-i18n="clickDayHint">Click a day tab to compare</span>
           </div>
 
-          <!-- Day Selector Tabs -->
-          <div class="grid grid-cols-5 gap-1.5 sm:gap-2 mb-3" id="dayAnalystTabs">
-            <!-- Populated dynamically by renderDayAnalyst() -->
-          </div>
-
-          <!-- Selected Day Deep-Dive Detail Box -->
-          <div id="selectedDayDetailBox" class="bg-[#131722] rounded-lg border border-[#2A2E39] p-3 text-xs">
-            <!-- Populated dynamically by renderDayAnalyst() -->
-          </div>
+          <div class="grid grid-cols-5 gap-1.5 sm:gap-2 mb-3" id="dayAnalystTabs"></div>
+          <div id="selectedDayDetailBox" class="bg-[#131722] rounded-lg border border-[#2A2E39] p-3 text-xs"></div>
         </div>
       </section>
 
@@ -352,7 +490,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
-          <!-- Main Verdict Box -->
           <div class="md:col-span-5 bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-4 flex flex-col justify-between">
             <div>
               <div class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1.5" data-i18n="currentActionVerdict">Current Action Verdict</div>
@@ -361,27 +498,26 @@
                 <span>WAIT / DO NOT BUY (High Risk)</span>
               </div>
               <p id="aiVerdictReason" class="mt-3 text-xs text-gray-300 leading-relaxed">
-                Price is trading below both SMA 20 and EMA 50 under strong daily bearish pressure. Avoid catching falling knives until a confirmed daily reversal forms near $3,750.
+                Price is trading below both SMA 20 and EMA 50 under strong daily bearish pressure. Avoid catching falling knives until a confirmed daily reversal forms near $3,505.
               </p>
             </div>
 
             <div class="mt-4 pt-3 border-t border-[#2A2E39] flex items-center justify-between text-xs font-mono">
               <span class="text-gray-400 font-sans" data-i18n="signalConfidence">Signal Confidence:</span>
-              <span id="aiConfidence" class="text-amber-400 font-bold">82%</span>
+              <span id="aiConfidence" class="text-amber-400 font-bold">84%</span>
             </div>
           </div>
 
-          <!-- Technical Sub-Metrics -->
           <div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3 flex flex-col justify-between">
               <span class="text-[11px] text-gray-400" data-i18n="volatilityRisk">Volatility Risk</span>
               <div id="aiRiskLevel" class="text-sm sm:text-base font-bold font-mono text-rose-400 my-1">HIGH RISK</div>
-              <span id="aiDrawdownText" class="text-[10px] text-gray-500 font-mono">24h Move: -2.01%</span>
+              <span id="aiDrawdownText" class="text-[10px] text-gray-500 font-mono">24h Move: -2.40%</span>
             </div>
 
             <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3 flex flex-col justify-between">
               <span class="text-[11px] text-gray-400" data-i18n="rsiMomentum">RSI (14) Momentum</span>
-              <div id="aiRsiValue" class="text-sm sm:text-base font-bold font-mono text-amber-400 my-1">31.4 (Oversold)</div>
+              <div id="aiRsiValue" class="text-sm sm:text-base font-bold font-mono text-amber-400 my-1">29.8 (Oversold)</div>
               <span class="text-[10px] text-gray-500" data-i18n="rsiHint">Below 30 = Bounce Watch</span>
             </div>
 
@@ -391,12 +527,11 @@
               <span id="aiMaDetail" class="text-[10px] text-gray-500 font-mono">Price &lt; SMA20 &amp; EMA50</span>
             </div>
 
-            <!-- Actionable Rule Banner -->
             <div class="col-span-2 sm:col-span-3 bg-[#161B26] border border-[#2A2E39] rounded-xl p-3 flex items-center justify-between gap-3">
               <div class="flex items-start gap-2.5">
                 <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5 text-sm"></i>
                 <div class="text-xs text-gray-300 leading-relaxed" id="aiEntryRuleText">
-                  <strong class="text-white">Entry Rule:</strong> Only enter a <span class="text-emerald-400 font-semibold">BUY</span> position when price reclaims <span class="font-mono text-amber-400">SMA 20</span> during the <span class="text-amber-400 font-semibold">London–NY Overlap (12:00–16:00 UTC)</span> on <span class="text-emerald-400 font-semibold">Tue–Thu</span>.
+                  <strong class="text-white">Entry Rule:</strong> Only enter a <span class="text-emerald-400 font-semibold">BUY</span> position when price reclaims <span class="font-mono text-amber-400">SMA 20</span> during the <span class="text-amber-400 font-semibold">London–NY Overlap (19:00–23:00 Cambodia / 12:00–16:00 UTC)</span> on <span class="text-emerald-400 font-semibold">Tue–Thu</span>.
                 </div>
               </div>
             </div>
@@ -422,7 +557,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-          <!-- Inputs -->
           <div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
               <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelBalance">Account Balance (USD)</label>
@@ -442,34 +576,33 @@
 
             <div>
               <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelEntry">Entry Price (XAU/USD)</label>
-              <input type="number" id="calcEntry" value="3771.50" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-sm font-mono text-white outline-none transition">
+              <input type="number" id="calcEntry" value="3538.26" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-sm font-mono text-white outline-none transition">
             </div>
 
             <div>
               <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelSL">Stop Loss Price</label>
-              <input type="number" id="calcSL" value="3755.00" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-rose-500 rounded-lg px-3 py-2 text-sm font-mono text-rose-400 outline-none transition">
+              <input type="number" id="calcSL" value="3520.00" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-rose-500 rounded-lg px-3 py-2 text-sm font-mono text-rose-400 outline-none transition">
             </div>
 
             <div class="sm:col-span-2">
               <label class="block text-xs font-medium text-gray-400 mb-1" data-i18n="labelTP">Take Profit Target</label>
-              <input type="number" id="calcTP" value="3815.00" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-emerald-500 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 outline-none transition">
+              <input type="number" id="calcTP" value="3585.00" step="0.1" oninput="calculateRisk()" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-emerald-500 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 outline-none transition">
             </div>
           </div>
 
-          <!-- Calculation Results Box -->
           <div class="md:col-span-5 bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-4 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-3">
                 <span class="text-xs text-gray-400 uppercase font-semibold tracking-wider" data-i18n="setupVerdict">Setup Verdict</span>
                 <span id="calcSignalBadge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  VALID LONG (1:2.64)
+                  VALID LONG (1:2.56)
                 </span>
               </div>
 
               <div class="space-y-2.5 font-mono text-sm">
                 <div class="flex justify-between items-center py-1.5 border-b border-[#2A2E39]/60">
                   <span class="text-gray-400 text-xs font-sans" data-i18n="recLotSize">Recommended Lot Size:</span>
-                  <span id="resLots" class="text-amber-400 font-bold text-base">0.05 Lots</span>
+                  <span id="resLots" class="text-amber-400 font-bold text-base">0.04 Lots</span>
                 </div>
                 <div class="flex justify-between items-center py-1.5 border-b border-[#2A2E39]/60">
                   <span class="text-gray-400 text-xs font-sans" data-i18n="capAtRisk">Capital at Risk:</span>
@@ -477,11 +610,11 @@
                 </div>
                 <div class="flex justify-between items-center py-1.5 border-b border-[#2A2E39]/60">
                   <span class="text-gray-400 text-xs font-sans" data-i18n="potProfit">Potential Profit:</span>
-                  <span id="resRewardUsd" class="text-emerald-400 font-semibold">+$197.73</span>
+                  <span id="resRewardUsd" class="text-emerald-400 font-semibold">+$192.00</span>
                 </div>
                 <div class="flex justify-between items-center pt-1">
                   <span class="text-gray-400 text-xs font-sans" data-i18n="rrRatio">Reward / Risk Ratio:</span>
-                  <span id="resRR" class="text-white font-bold">1 : 2.64</span>
+                  <span id="resRR" class="text-white font-bold">1 : 2.56</span>
                 </div>
               </div>
             </div>
@@ -506,16 +639,16 @@
             </div>
           </div>
 
-          <!-- Live UTC & Local Clock + Prime Countdown -->
+          <!-- Live Cambodia Time (ICT) & UTC Clock + Prime Countdown -->
           <div class="flex flex-wrap items-center gap-2.5 bg-[#0B0E14] px-3 py-1.5 rounded-xl border border-[#2A2E39] font-mono text-xs">
             <div>
-              <span class="text-gray-500 text-[10px] block" data-i18n="utcClockLabel">UTC CLOCK</span>
-              <span id="utcClock" class="text-white font-bold">00:00:00 UTC</span>
+              <span class="text-amber-400 text-[10px] block" data-i18n="khClockShort">🇰🇭 CAMBODIA (UTC+7)</span>
+              <span id="localClock" class="text-amber-400 font-bold">00:00:00</span>
             </div>
             <div class="h-6 w-[1px] bg-[#2A2E39]"></div>
             <div>
-              <span class="text-gray-500 text-[10px] block" data-i18n="localTimeLabel">LOCAL TIME</span>
-              <span id="localClock" class="text-amber-400 font-bold">00:00:00</span>
+              <span class="text-gray-500 text-[10px] block" data-i18n="utcClockLabel">UTC CLOCK</span>
+              <span id="utcClock" class="text-white font-bold">00:00:00 UTC</span>
             </div>
             <div class="h-6 w-[1px] bg-[#2A2E39]"></div>
             <div>
@@ -525,12 +658,8 @@
           </div>
         </div>
 
-        <!-- Trading Sessions Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4" id="sessionCardsContainer">
-          <!-- Populated dynamically by updateSessionClock() -->
-        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4" id="sessionCardsContainer"></div>
 
-        <!-- Best Days of the Week Matrix (Mon - Fri) -->
         <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3.5">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
@@ -540,9 +669,7 @@
               <i class="fa-brands fa-telegram"></i> <span data-i18n="sendTimingTg">Send Timing &amp; Risk Briefing</span>
             </button>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="weekdayMatrixContainer">
-            <!-- Populated dynamically -->
-          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="weekdayMatrixContainer"></div>
         </div>
       </section>
 
@@ -577,7 +704,6 @@
             <input type="text" id="tgChatId" placeholder="e.g., 123456789 or -1001234567890" class="w-full bg-[#0B0E14] border border-[#2A2E39] focus:border-[#38bdf8] rounded-lg px-3 py-2 text-xs font-mono text-white outline-none transition">
           </div>
 
-          <!-- Automation Toggles -->
           <div class="bg-[#0B0E14] rounded-lg border border-[#2A2E39] p-2.5 space-y-2">
             <label class="flex items-center justify-between cursor-pointer text-xs text-gray-300">
               <span data-i18n="tgAutoToggle">Auto-Notify on Signal / Risk Change</span>
@@ -589,7 +715,6 @@
             </label>
           </div>
 
-          <!-- Action Buttons -->
           <div class="grid grid-cols-2 gap-2 pt-1">
             <button onclick="saveTelegramSettings(false)" class="py-2 px-3 rounded-lg bg-[#1E222D] hover:bg-[#2A2E39] text-white border border-[#2A2E39] text-xs font-semibold transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-floppy-disk text-amber-400"></i> <span data-i18n="saveCredsBtn">Save Credentials</span>
@@ -599,7 +724,6 @@
             </button>
           </div>
 
-          <!-- Status Footer -->
           <div class="text-[11px] text-gray-400 flex items-center justify-between pt-1 border-t border-[#2A2E39]/60">
             <span id="tgLastSent">Last sent: Never</span>
             <button onclick="toggleTokenVisibility()" class="text-[#38bdf8] hover:underline text-[10px]" data-i18n="showHideToken">Show/Hide Token</button>
@@ -607,18 +731,16 @@
         </div>
       </section>
 
-      <!-- 7. Live Multi-Asset Watchlist Panel -->
+      <!-- 7. Live Multi-Asset Watchlist Panel (Includes Cambodia Damlung & USD/KHR) -->
       <section class="bg-[#131722] rounded-xl border border-[#2A2E39] overflow-hidden shadow-xl">
         <div class="px-4 py-3 border-b border-[#2A2E39] flex items-center justify-between bg-[#161B26]">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-layer-group text-amber-500 text-sm"></i>
-            <h2 class="text-white font-bold text-sm" data-i18n="watchlistTitle">Global Commodities &amp; FX Watchlist</h2>
+            <h2 class="text-white font-bold text-sm" data-i18n="watchlistTitle">Global &amp; Cambodia Market Watchlist</h2>
           </div>
           <span class="text-[10px] font-mono text-gray-400" data-i18n="realTimeTag">REAL-TIME</span>
         </div>
-        <div id="watchlistContainer" class="divide-y divide-[#2A2E39]/70">
-          <!-- Populated dynamically via JS -->
-        </div>
+        <div id="watchlistContainer" class="divide-y divide-[#2A2E39]/70"></div>
       </section>
 
       <!-- 8. Market Structure & Sentiment Summary Card -->
@@ -632,19 +754,19 @@
         <div class="space-y-2.5 text-xs">
           <div class="flex justify-between items-center bg-[#0B0E14] px-3 py-2 rounded-lg border border-[#2A2E39]">
             <span class="text-gray-400" data-i18n="keyResLabel">Key Resistance (R1)</span>
-            <span class="font-mono font-semibold text-rose-400">3,820.50 USD</span>
+            <span class="font-mono font-semibold text-rose-400">3,637.20 USD</span>
           </div>
           <div class="flex justify-between items-center bg-[#0B0E14] px-3 py-2 rounded-lg border border-[#2A2E39]">
             <span class="text-gray-400" data-i18n="majorSupLabel">Major Support (S1)</span>
-            <span class="font-mono font-semibold text-emerald-400">3,750.00 USD</span>
+            <span class="font-mono font-semibold text-emerald-400">3,502.85 USD</span>
           </div>
           <div class="flex justify-between items-center bg-[#0B0E14] px-3 py-2 rounded-lg border border-[#2A2E39]">
             <span class="text-gray-400" data-i18n="volRangeLabel">24h Volatility Range</span>
-            <span class="font-mono font-semibold text-amber-400">80.30 USD (2.13%)</span>
+            <span class="font-mono font-semibold text-amber-400">134.35 USD (3.80%)</span>
           </div>
         </div>
         <p class="mt-3 text-[11px] text-gray-400 leading-relaxed" id="analystNoteBox">
-          <strong class="text-gray-200">Analyst Note:</strong> Daily trend remains under selling pressure following rejection from the 4,600+ peak. Wait for base consolidation or a bullish engulfing candle near <span class="text-emerald-400 font-mono">3,750.00</span> before scaling into long positions.
+          <strong class="text-gray-200">Analyst Note:</strong> Daily trend remains under selling pressure following rejection from the 4,148+ high. Wait for base consolidation or a bullish engulfing candle near <span class="text-emerald-400 font-mono">3,502.85</span> before scaling into long positions.
         </p>
       </section>
 
@@ -660,7 +782,6 @@
           </span>
         </div>
 
-        <!-- Add Note / Alert Form -->
         <form onsubmit="addJournalEntry(event)" class="flex flex-col gap-2 mb-3">
           <div class="flex gap-2">
             <select id="noteTag" class="bg-[#0B0E14] border border-[#2A2E39] rounded-lg px-2.5 py-2 text-xs font-medium text-amber-400 outline-none">
@@ -669,17 +790,14 @@
               <option value="SHORT">SHORT</option>
               <option value="NOTE">NOTE</option>
             </select>
-            <input type="text" id="noteInput" required placeholder="e.g., Buy XAU/USD if 1H closes above 3,785..." class="flex-1 bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none transition">
+            <input type="text" id="noteInput" required placeholder="e.g., Buy 2 Damlung in Phnom Penh if XAU holds $3,505..." class="flex-1 bg-[#0B0E14] border border-[#2A2E39] focus:border-amber-500 rounded-lg px-3 py-2 text-xs text-white outline-none transition">
             <button type="submit" class="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs transition shrink-0" data-i18n="addBtn">
               Add
             </button>
           </div>
         </form>
 
-        <!-- Saved Entries List -->
-        <div id="journalList" class="space-y-2 overflow-y-auto max-h-[250px] pr-1 flex-1">
-          <!-- Populated from localStorage -->
-        </div>
+        <div id="journalList" class="space-y-2 overflow-y-auto max-h-[250px] pr-1 flex-1"></div>
       </section>
 
     </div>
@@ -697,15 +815,7 @@
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
-      <div class="mt-4 space-y-3 text-xs sm:text-sm text-gray-300 leading-relaxed" id="modalBodyContent">
-        <p>This entire Gold Tracking &amp; Telegram Alert Terminal is self-contained in a single static <code class="text-amber-400 bg-[#0B0E14] px-1.5 py-0.5 rounded">index.html</code> file—no backend server required:</p>
-        <ol class="list-decimal list-inside space-y-2 text-gray-300 bg-[#0B0E14] p-3.5 rounded-xl border border-[#2A2E39]">
-          <li>Create a new public repository on <strong class="text-white">GitHub</strong> (e.g., <code class="text-amber-400">gold-tracker</code>).</li>
-          <li>Upload this file as <code class="text-amber-400">index.html</code> to the root of your repository.</li>
-          <li>Go to <strong class="text-white">Settings &rarr; Pages</strong>, select the <code class="text-amber-400">main</code> branch, and click <strong class="text-white">Save</strong>.</li>
-          <li>Your live Gold &amp; Telegram Web App will be online at <code class="text-emerald-400">https://username.github.io/gold-tracker/</code>.</li>
-        </ol>
-      </div>
+      <div class="mt-4 space-y-3 text-xs sm:text-sm text-gray-300 leading-relaxed" id="modalBodyContent"></div>
       <div class="mt-5 flex justify-end gap-2">
         <button onclick="copyFullSource()" class="px-4 py-2 rounded-lg bg-[#1E222D] hover:bg-[#2A2E39] text-amber-400 text-xs font-semibold border border-[#2A2E39] transition">
           <i class="fa-regular fa-copy mr-1"></i> <span data-i18n="copyHtmlBtn">Copy HTML Source</span>
@@ -733,10 +843,14 @@
     const I18N = {
       en: {
         liveFeed: 'LIVE FEED',
-        brandSubtitle: 'XAU/USD Institutional Market Analytics & Risk Suite',
+        brandSubtitle: 'XAU/USD Institutional Market & Cambodia Live Gold Suite',
         spotGold: 'XAU / USD Spot',
-        highLow24h: '24h High / Low',
+        khHeaderLabel: 'KH 24K (1 Damlung)',
+        buyShort: 'Buy:',
+        sellShort: 'Sell:',
+        khLiveTimeLabel: 'CAMBODIA LIVE (ICT)',
         aiMarketBias: 'AI Market Bias',
+        navCambodiaMarket: 'Cambodia Gold',
         navDayAnalyst: 'Day Analyst',
         navTelegram: 'Telegram Bot',
         tgConnectedShort: 'TG Connected',
@@ -752,6 +866,23 @@
         ttLow: 'Low:',
         ttClose: 'Close:',
 
+        // Cambodia Market Module
+        khMarketTitle: 'Cambodia Gold Market — Live Buy & Sell (Phnom Penh)',
+        khLiveBadge: 'LIVE CAMBODIA',
+        khMarketSubtitle: 'Real-time Phnom Penh bullion & jewelry shop Buy/Sell rates (Damlung / Chi / Gram) in USD & KHR',
+        khSectionClockTitle: 'PHNOM PENH TIME (UTC+7)',
+        sendKhTgBtn: 'Send KH Rates to Telegram',
+        khPurityLabel: 'Gold Purity / Karat (ប្រភេទទឹកមាស)',
+        khSpreadLabel: 'Phnom Penh Shop Spread ($ / Damlung)',
+        khFxLabel: 'USD / KHR Rate',
+        khColUnit: 'Weight Unit (ខ្នាតទម្ងន់)',
+        khColShopBuy: 'Market Buy (ទិញចូល)',
+        khColShopSell: 'Market Sell (លក់ចេញ)',
+        khColKhrSell: 'Sell in KHR (ប្រាក់រៀល)',
+        khQuickCalcTitle: 'Quick Cambodia Gold Calculator:',
+        khShopBuysLabel: 'Shop Buys From You:',
+        khShopSellsLabel: 'Shop Sells To You:',
+
         // Day Analyst Module
         dayAnalystTitle: 'Buy Today vs. Best Day Analyst',
         dayAnalystBadge: 'SMART ENTRY PLANNER',
@@ -760,7 +891,7 @@
         todayStatusLabel: "TODAY'S ENTRY EVALUATION",
         todaySetupScore: "Today's Buy Readiness Score:",
         whichDayLabel: 'WHICH DAY SHOULD WE BUY?',
-        primeWindowShort: '12:00–16:00 UTC',
+        primeWindowShort: '19:00–23:00 KH (12–16 UTC)',
         targetBuyZone: 'Target Buy Zone:',
         confirmationTrigger: 'Confirmation Trigger:',
         inspectDayPrompt: 'Select any day below to inspect Analyst Strategy & Entry Plan:',
@@ -783,7 +914,7 @@
         rsiMomentum: 'RSI (14) Momentum',
         rsiHint: 'Below 30 = Bounce Watch',
         maTrendAlign: 'MA Trend Alignment',
-        aiEntryRuleHtml: '<strong class="text-white">Entry Rule:</strong> Only enter a <span class="text-emerald-400 font-semibold">BUY</span> position when price reclaims <span class="font-mono text-amber-400">SMA 20</span> during the <span class="text-amber-400 font-semibold">London–NY Overlap (12:00–16:00 UTC)</span> on <span class="text-emerald-400 font-semibold">Tue–Thu</span>.',
+        aiEntryRuleHtml: '<strong class="text-white">Entry Rule:</strong> Only enter a <span class="text-emerald-400 font-semibold">BUY</span> position when price reclaims <span class="font-mono text-amber-400">SMA 20</span> during the <span class="text-amber-400 font-semibold">London–NY Overlap (19:00–23:00 Cambodia / 12:00–16:00 UTC)</span> on <span class="text-emerald-400 font-semibold">Tue–Thu</span>.',
 
         // Risk Calculator
         calcTitle: 'XAU/USD Position & Risk Calculator',
@@ -803,8 +934,8 @@
         // Timing Advisor
         timingTitle: 'Best Day & Time to Join Market (XAU/USD Timing Advisor)',
         timingSubtitle: 'Institutional liquidity windows & weekly probability schedule',
+        khClockShort: '🇰🇭 CAMBODIA (UTC+7)',
         utcClockLabel: 'UTC CLOCK',
-        localTimeLabel: 'LOCAL TIME',
         primeOverlapLabel: 'PRIME OVERLAP',
         weeklyMatrixTitle: 'Weekly Day-of-Week Probability Matrix',
         sendTimingTg: 'Send Timing & Risk Briefing',
@@ -826,16 +957,16 @@
         showHideToken: 'Show/Hide Token',
 
         // Watchlist, Summary, Journal
-        watchlistTitle: 'Global Commodities & FX Watchlist',
+        watchlistTitle: 'Global & Cambodia Market Watchlist',
         realTimeTag: 'REAL-TIME',
         techSummaryTitle: 'Technical Structure Summary',
         keyResLabel: 'Key Resistance (R1)',
         majorSupLabel: 'Major Support (S1)',
         volRangeLabel: '24h Volatility Range',
-        analystNoteHtml: '<strong class="text-gray-200">Analyst Note:</strong> Daily trend remains under selling pressure following rejection from the 4,600+ peak. Wait for base consolidation or a bullish engulfing candle near <span class="text-emerald-400 font-mono">3,750.00</span> before scaling into long positions.',
+        analystNoteHtml: '<strong class="text-gray-200">Analyst Note:</strong> Daily trend remains under selling pressure following rejection from the 4,148+ high. Wait for base consolidation or a bullish engulfing candle near <span class="text-emerald-400 font-mono">3,502.85</span> before scaling into long positions.',
         journalTitle: 'Trade Journal & Price Alerts',
         autoSavedBadge: 'Auto-Saved',
-        notePlaceholder: 'e.g., Buy XAU/USD if 1H closes above 3,785...',
+        notePlaceholder: 'e.g., Buy 2 Damlung in Phnom Penh if XAU holds $3,505...',
         addBtn: 'Add',
         noJournalEntries: 'No trade notes saved yet. Add your first Gold setup above.',
 
@@ -852,7 +983,6 @@
             <li>Your live Gold &amp; Telegram Web App will be online at <code class="text-emerald-400">https://username.github.io/gold-tracker/</code>.</li>
           </ol>
         `,
-        toastLangChanged: 'Language switched to English',
         toastFeedResumed: 'Live market feed resumed',
         toastFeedPaused: 'Market feed paused for chart analysis',
         toastSavedStorage: 'Saved to local browser storage',
@@ -863,15 +993,20 @@
         toastTgTestSent: 'Test alert delivered to your Telegram!',
         toastTgSignalSent: 'Signal & Risk Report sent to Telegram!',
         toastTgTimingSent: 'Market Timing Briefing sent to Telegram!',
-        toastTgDayAnalystSent: 'Buy Today vs. Best Day Analyst sent to Telegram!'
+        toastTgDayAnalystSent: 'Buy Today vs. Best Day Analyst sent to Telegram!',
+        toastTgKhSent: 'Cambodia Live Gold Buy/Sell rates sent to Telegram!'
       },
 
       km: {
         liveFeed: 'ទិន្នន័យផ្ទាល់',
-        brandSubtitle: 'ប្រព័ន្ធវិភាគទីផ្សារមាស XAU/USD និងគ្រប់គ្រងហានិភ័យ',
-        spotGold: 'តម្លៃមាស XAU / USD',
-        highLow24h: 'ខ្ពស់បំផុត / ទាបបំផុត ២៤ម៉ោង',
+        brandSubtitle: 'ប្រព័ន្ធវិភាគទីផ្សារមាស XAU/USD និងហាងឆេងមាសនៅកម្ពុជា',
+        spotGold: 'តម្លៃមាសសកល XAU/USD',
+        khHeaderLabel: '🇰🇭 មាសទឹក១០ (១ តម្លឹង)',
+        buyShort: 'ទិញ:',
+        sellShort: 'លក់:',
+        khLiveTimeLabel: 'ម៉ោងផ្ទាល់នៅកម្ពុជា',
         aiMarketBias: 'ទិសដៅទីផ្សារ AI',
+        navCambodiaMarket: 'ហាងឆេងមាសខ្មែរ',
         navDayAnalyst: 'វិភាគថ្ងៃទិញ',
         navTelegram: 'តេឡេក្រាម',
         tgConnectedShort: 'បានភ្ជាប់ TG',
@@ -887,7 +1022,24 @@
         ttLow: 'ទាប:',
         ttClose: 'បិទ:',
 
-        // Day Analyst Module (តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?)
+        // Cambodia Market Module
+        khMarketTitle: 'ទីផ្សារមាសនៅកម្ពុជា — ហាងឆេងទិញចូល និងលក់ចេញផ្ទាល់ (ភ្នំពេញ)',
+        khLiveBadge: 'ផ្សាយផ្ទាល់នៅកម្ពុជា',
+        khMarketSubtitle: 'តម្លៃមាសទិញចូល និងលក់ចេញជាក់ស្តែងនៅភ្នំពេញ (តម្លឹង / ជី / ក្រាម) គិតជាដុល្លារ ($) និងប្រាក់រៀល (៛)',
+        khSectionClockTitle: 'ម៉ោងបច្ចុប្បន្ននៅភ្នំពេញ (UTC+7)',
+        sendKhTgBtn: 'ផ្ញើហាងឆេងមាសខ្មែរទៅ Telegram',
+        khPurityLabel: 'ប្រភេទទឹកមាស (Gold Purity)',
+        khSpreadLabel: 'គម្លាតតម្លៃហាង ($ / ១ តម្លឹង)',
+        khFxLabel: 'អត្រាប្តូរប្រាក់ USD / KHR',
+        khColUnit: 'ខ្នាតទម្ងន់មាស',
+        khColShopBuy: 'ហាងទិញចូល (Buy)',
+        khColShopSell: 'ហាងលក់ចេញ (Sell)',
+        khColKhrSell: 'តម្លៃលក់ចេញ (រៀល)',
+        khQuickCalcTitle: 'កម្មវិធីគណនាតម្លៃមាសនៅកម្ពុជា៖',
+        khShopBuysLabel: 'ហាងទិញចូលវិញ៖',
+        khShopSellsLabel: 'ហាងលក់ចេញឱ្យអ្នក៖',
+
+        // Day Analyst Module
         dayAnalystTitle: 'អ្នកវិភាគ៖ តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ?',
         dayAnalystBadge: 'ផែនការចូលទិញឆ្លាតវៃ',
         dayAnalystSubtitle: 'តើយើងគួរទិញមាសនៅថ្ងៃនេះ ឬគួររង់ចាំថ្ងៃណាក្នុងសប្តាហ៍ដែលមានឱកាសចំណេញខ្ពស់បំផុត?',
@@ -895,7 +1047,7 @@
         todayStatusLabel: 'ការវាយតម្លៃសម្រាប់ថ្ងៃនេះ',
         todaySetupScore: 'ពិន្ទុភាពរួចរាល់ក្នុងការទិញថ្ងៃនេះ៖',
         whichDayLabel: 'តើថ្ងៃណាល្អបំផុតសម្រាប់ទិញ?',
-        primeWindowShort: 'ម៉ោង 12:00–16:00 UTC',
+        primeWindowShort: 'ម៉ោង 19:00–23:00 កម្ពុជា',
         targetBuyZone: 'តំបន់គោលដៅទិញ៖',
         confirmationTrigger: 'សញ្ញាបញ្ជាក់ចូលទិញ៖',
         inspectDayPrompt: 'ជ្រើសរើសថ្ងៃណាមួយខាងក្រោម ដើម្បីមើលយុទ្ធសាស្ត្រអ្នកវិភាគ៖',
@@ -918,7 +1070,7 @@
         rsiMomentum: 'សន្ទុះ RSI (14)',
         rsiHint: 'ក្រោម 30 = តាមដានការងើបឡើងវិញ',
         maTrendAlign: 'និន្នាការខ្សែ MA',
-        aiEntryRuleHtml: '<strong class="text-white">គោលការណ៍ចូលទិញ៖</strong> ចូលទិញ (<span class="text-emerald-400 font-semibold">BUY</span>) តែនៅពេលតម្លៃឡើងផុត <span class="font-mono text-amber-400">SMA 20</span> ក្នុងអំឡុងម៉ោង <span class="text-amber-400 font-semibold">London–NY Overlap (12:00–16:00 UTC)</span> នៅថ្ងៃ <span class="text-emerald-400 font-semibold">អង្គារ ដល់ ព្រហស្បតិ៍</span>។',
+        aiEntryRuleHtml: '<strong class="text-white">គោលការណ៍ចូលទិញ៖</strong> ចូលទិញ (<span class="text-emerald-400 font-semibold">BUY</span>) តែនៅពេលតម្លៃឡើងផុត <span class="font-mono text-amber-400">SMA 20</span> ក្នុងអំឡុងម៉ោង <span class="text-amber-400 font-semibold">London–NY Overlap (19:00–23:00 ម៉ោងនៅកម្ពុជា)</span> នៅថ្ងៃ <span class="text-emerald-400 font-semibold">អង្គារ ដល់ ព្រហស្បតិ៍</span>។',
 
         // Risk Calculator
         calcTitle: 'កម្មវិធីគណនាទំហំ Lot និងហានិភ័យ XAU/USD',
@@ -938,8 +1090,8 @@
         // Timing Advisor
         timingTitle: 'ថ្ងៃ និងម៉ោងល្អបំផុតដើម្បីចូលទីផ្សារ (XAU/USD Timing Advisor)',
         timingSubtitle: 'ម៉ោងទីផ្សារធំៗបើកដំណើរការ និងតារាងភាគរយប្រចាំសប្តាហ៍',
+        khClockShort: '🇰🇭 ម៉ោងកម្ពុជា (UTC+7)',
         utcClockLabel: 'ម៉ោងសកល UTC',
-        localTimeLabel: 'ម៉ោងក្នុងស្រុក',
         primeOverlapLabel: 'ម៉ោងមាស (OVERLAP)',
         weeklyMatrixTitle: 'តារាងវាយតម្លៃប្រចាំថ្ងៃ (ច័ន្ទ - សុក្រ)',
         sendTimingTg: 'ផ្ញើកាលវិភាគទីផ្សារទៅ Telegram',
@@ -961,16 +1113,16 @@
         showHideToken: 'បង្ហាញ/លាក់ Token',
 
         // Watchlist, Summary, Journal
-        watchlistTitle: 'តារាងតាមដានមាស និងរូបិយប័ណ្ណសកល',
+        watchlistTitle: 'តារាងតាមដានមាសសកល និងទីផ្សារកម្ពុជា',
         realTimeTag: 'ផ្ទាល់',
         techSummaryTitle: 'សង្ខេបរចនាសម្ព័ន្ធបច្ចេកទេស',
         keyResLabel: 'របាំងតម្លៃខាងលើ (R1)',
         majorSupLabel: 'ទម្រតម្លៃខាងក្រោម (S1)',
         volRangeLabel: 'គម្លាតប្រែប្រួល ២៤ម៉ោង',
-        analystNoteHtml: '<strong class="text-gray-200">កំណត់សម្គាល់អ្នកវិភាគ៖</strong> និន្នាការប្រចាំថ្ងៃនៅតែស្ថិតក្រោមសម្ពាធលក់។ សូមរង់ចាំតម្លៃបង្កើតមូលដ្ឋានរឹងមាំ ឬទៀនបញ្ជាក់ការឡើងវិញនៅក្បែរ <span class="text-emerald-400 font-mono">3,750.00</span> មុននឹងចូលទិញ។',
+        analystNoteHtml: '<strong class="text-gray-200">កំណត់សម្គាល់អ្នកវិភាគ៖</strong> និន្នាការប្រចាំថ្ងៃនៅតែស្ថិតក្រោមសម្ពាធលក់។ សូមរង់ចាំតម្លៃបង្កើតមូលដ្ឋានរឹងមាំ ឬទៀនបញ្ជាក់ការឡើងវិញនៅក្បែរ <span class="text-emerald-400 font-mono">3,502.85</span> មុននឹងចូលទិញ។',
         journalTitle: 'កំណត់ត្រាជួញដូរ និងការជូនដំណឹងតម្លៃ',
         autoSavedBadge: 'រក្សាទុកស្វ័យប្រវត្តិ',
-        notePlaceholder: 'ឧទាហរណ៍៖ ទិញ XAU/USD ប្រសិនបើទៀន 1H បិទលើ 3,785...',
+        notePlaceholder: 'ឧទាហរណ៍៖ ទិញមាស ២ តម្លឹងនៅភ្នំពេញ បើតម្លៃឈរលើ $3,505...',
         addBtn: 'បន្ថែម',
         noJournalEntries: 'មិនទាន់មានកំណត់ត្រាជួញដូរនៅឡើយទេ។ សូមបន្ថែមផែនការរបស់អ្នកខាងលើ។',
 
@@ -987,7 +1139,6 @@
             <li>គេហទំព័ររបស់អ្នកនឹងដំណើរការផ្ទាល់នៅ <code class="text-emerald-400">https://username.github.io/gold-tracker/</code>។</li>
           </ol>
         `,
-        toastLangChanged: 'បានប្តូរភាសាទៅជា ភាសាខ្មែរ',
         toastFeedResumed: 'បានបន្តទិន្នន័យទីផ្សារផ្ទាល់',
         toastFeedPaused: 'បានផ្អាកទិន្នន័យដើម្បីវិភាគក្រាហ្វ',
         toastSavedStorage: 'បានរក្សាទុកក្នុង Browser របស់អ្នក',
@@ -998,7 +1149,8 @@
         toastTgTestSent: 'បានផ្ញើសារសាកល្បងទៅកាន់ Telegram របស់អ្នក!',
         toastTgSignalSent: 'បានផ្ញើរបាយការណ៍វិភាគទៅកាន់ Telegram!',
         toastTgTimingSent: 'បានផ្ញើកាលវិភាគទីផ្សារទៅកាន់ Telegram!',
-        toastTgDayAnalystSent: 'បានផ្ញើការវិភាគ "ទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ" ទៅ Telegram!'
+        toastTgDayAnalystSent: 'បានផ្ញើការវិភាគ "ទិញថ្ងៃនេះ ឬថ្ងៃណាល្អ" ទៅ Telegram!',
+        toastTgKhSent: 'បានផ្ញើហាងឆេងមាសទិញ-លក់នៅកម្ពុជាទៅ Telegram!'
       }
     };
 
@@ -1013,7 +1165,6 @@
         localStorage.setItem(LANG_STORAGE_KEY, currentLang);
       } catch (e) {}
 
-      // Toggle active button styles
       const btnEn = document.getElementById('langBtnEn');
       const btnKm = document.getElementById('langBtnKm');
       if (currentLang === 'en') {
@@ -1024,7 +1175,6 @@
         btnEn.className = 'px-2.5 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white transition';
       }
 
-      // Apply static data-i18n attributes
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (I18N[currentLang][key]) {
@@ -1032,7 +1182,6 @@
         }
       });
 
-      // Apply rich HTML blocks & placeholders
       const ruleEl = document.getElementById('aiEntryRuleText');
       if (ruleEl) ruleEl.innerHTML = t('aiEntryRuleHtml');
 
@@ -1045,13 +1194,12 @@
       const noteInput = document.getElementById('noteInput');
       if (noteInput) noteInput.placeholder = t('notePlaceholder');
 
-      // Update feed pause/resume text
       const feedText = document.getElementById('feedText');
       if (feedText) feedText.textContent = isLive ? t('pauseFeed') : t('resumeFeed');
 
-      // Re-render all dynamic sections in the selected language
       const configured = Boolean(document.getElementById('tgBotToken')?.value.trim() && document.getElementById('tgChatId')?.value.trim());
       updateTelegramStatusUI(configured);
+      renderCambodiaMarket();
       renderWatchlist();
       calculateRisk();
       evaluateMarketSignal();
@@ -1062,31 +1210,31 @@
     }
 
     // =========================================================================
-    // 1. MARKET DATA & STATE INITIALIZATION
+    // 1. MARKET DATA & STATE INITIALIZATION (REAL NOV 2026 RATES)
     // =========================================================================
     let isLive = true;
     let currentTimeframe = '1D';
-    let chartType = 'candle'; // 'candle' or 'line'
+    let chartType = 'candle';
     let indicators = {
       sma20: true,
       ema50: true,
       sr: true
     };
 
-    // Baseline XAU/USD spot price anchored around $3,771.46
-    let goldPrice = 3771.46;
-    const goldOpen24h = 3848.93;
-    let goldHigh24h = 3852.10;
-    let goldLow24h = 3768.90;
+    // Real current XAU/USD spot price (~$3,538.26/oz)
+    let goldPrice = 3538.26;
+    const goldOpen24h = 3625.31;
+    let goldHigh24h = 3637.21;
+    let goldLow24h = 3502.85;
     let hoverIndex = -1;
 
-    // Multi-Asset Watchlist Data
+    // Multi-Asset Watchlist Data (Includes Cambodia 1 Damlung & USD/KHR)
     const watchlist = [
-      { symbol: 'XAU/USD', nameEn: 'Gold Spot (1 oz)', nameKm: 'មាសសុទ្ធ (1 oz)', price: 3771.46, prevClose: 3848.93, decimals: 2, icon: 'fa-coins', color: 'text-amber-400' },
+      { symbol: 'XAU/USD', nameEn: 'Global Spot Gold (1 oz)', nameKm: 'មាសសកល (1 oz)', price: 3538.26, prevClose: 3625.31, decimals: 2, icon: 'fa-coins', color: 'text-amber-400' },
+      { symbol: 'KH-24K/1ត', nameEn: 'Cambodia 24K (1 Damlung)', nameKm: 'មាសទឹក១០ កម្ពុជា (១ តម្លឹង)', price: 4281.00, prevClose: 4385.00, decimals: 2, icon: 'fa-crown', color: 'text-amber-300' },
+      { symbol: 'USD/KHR', nameEn: 'US Dollar / Cambodian Riel', nameKm: 'ដុល្លារអាមេរិក / រៀលកម្ពុជា', price: 4075.00, prevClose: 4075.00, decimals: 0, icon: 'fa-money-bill-wave', color: 'text-emerald-400' },
       { symbol: 'XAG/USD', nameEn: 'Silver Spot', nameKm: 'ប្រាក់ (Silver)', price: 45.95, prevClose: 47.37, decimals: 2, icon: 'fa-ring', color: 'text-slate-300' },
-      { symbol: 'XPT/USD', nameEn: 'Platinum Spot', nameKm: 'ផ្លាទីន (Platinum)', price: 1401.60, prevClose: 1428.60, decimals: 2, icon: 'fa-gem', color: 'text-cyan-300' },
-      { symbol: 'USOIL', nameEn: 'WTI Crude Oil', nameKm: 'ប្រេងឆៅ WTI', price: 82.75, prevClose: 85.60, decimals: 2, icon: 'fa-oil-can', color: 'text-orange-400' },
-      { symbol: 'EUR/USD', nameEn: 'Euro / US Dollar', nameKm: 'អឺរ៉ូ / ដុល្លារអាមេរិក', price: 1.0981, prevClose: 1.0998, decimals: 4, icon: 'fa-euro-sign', color: 'text-indigo-400' }
+      { symbol: 'USOIL', nameEn: 'WTI Crude Oil', nameKm: 'ប្រេងឆៅ WTI', price: 82.75, prevClose: 85.60, decimals: 2, icon: 'fa-oil-can', color: 'text-orange-400' }
     ];
 
     const candleStore = {};
@@ -1102,20 +1250,20 @@
         '1D': 24 * 60 * 60 * 1000,
         '1W': 7 * 24 * 60 * 60 * 1000
       };
-      const volMap = { '1m': 2.2, '15m': 6.5, '1H': 14.0, '1D': 38.0, '1W': 75.0 };
+      const volMap = { '1m': 2.1, '15m': 6.0, '1H': 13.5, '1D': 36.0, '1W': 70.0 };
       const stepMs = stepMap[tf] || stepMap['1D'];
-      const vol = volMap[tf] || 25.0;
+      const vol = volMap[tf] || 24.0;
 
-      let price = tf === '1D' ? 4280 : (tf === '1W' ? 4520 : 3835);
+      let price = tf === '1D' ? 4065 : (tf === '1W' ? 4320 : 3610);
       for (let i = 0; i < count; i++) {
         const isLast = i === count - 1;
         const progress = i / count;
-        const target = 3771.46;
+        const target = 3538.26;
         const pull = (target - price) * (progress * 0.18);
         const change = (Math.random() - 0.52) * vol + pull;
 
         const open = price;
-        const close = isLast ? goldPrice : Math.max(3500, open + change);
+        const close = isLast ? goldPrice : Math.max(3350, open + change);
         const high = Math.max(open, close) + Math.random() * (vol * 0.45);
         const low = Math.min(open, close) - Math.random() * (vol * 0.45);
 
@@ -1134,6 +1282,203 @@
     ['1m', '15m', '1H', '1D', '1W'].forEach(tf => {
       candleStore[tf] = generateInitialCandles(tf);
     });
+
+    // =========================================================================
+    // NEW MODULE: CAMBODIA GOLD MARKET (LIVE PHNOM PENH BUY/SELL & ICT CLOCK)
+    // =========================================================================
+    let selectedKhPurity = '24K';
+    const KH_PURITY_MAP = {
+      '24K': { factor: 0.999, labelEn: '24K Pure Gold (មាសទឹក ១០ · 99.9%)', labelKm: 'មាសទឹក ១០ (24K · 99.9%)' },
+      '22K': { factor: 0.9167, labelEn: '22K Gold (មាស 91.6%)', labelKm: 'មាស 22K (91.6%)' },
+      '18K': { factor: 0.750, labelEn: '18K Jewelry Gold (មាសទឹក ៧.៥ · 75%)', labelKm: 'មាសទឹក ៧.៥ (18K · 75%)' }
+    };
+
+    const TROY_OZ_GRAMS = 31.1034768;
+    const DAMLUNG_GRAMS = 37.5; // 1 Damlung (១ តម្លឹង) = 37.5g = 10 Chi
+    const CHI_GRAMS = 3.75;      // 1 Chi (១ ជី) = 3.75g
+
+    function setKhPurity(purity) {
+      selectedKhPurity = purity;
+      ['24K', '22K', '18K'].forEach(p => {
+        const btn = document.getElementById(`khPur${p}`);
+        if (!btn) return;
+        if (p === purity) {
+          btn.className = 'py-1.5 px-2 rounded-lg text-xs font-bold bg-amber-500 text-black transition';
+        } else {
+          btn.className = 'py-1.5 px-2 rounded-lg text-xs font-bold bg-[#131722] text-gray-300 border border-[#2A2E39] hover:border-amber-500/40 transition';
+        }
+      });
+      renderCambodiaMarket();
+    }
+
+    function getCambodiaGoldSnapshot() {
+      const purityObj = KH_PURITY_MAP[selectedKhPurity] || KH_PURITY_MAP['24K'];
+      const shopSpreadDamlung = parseFloat(document.getElementById('khShopSpread')?.value) || 30;
+      const usdToKhr = parseFloat(document.getElementById('khUsdKhrRate')?.value) || 4075;
+
+      // Raw spot per gram in USD adjusted by purity
+      const rawPerGramUsd = (goldPrice / TROY_OZ_GRAMS) * purityObj.factor;
+      const rawPerDamlungUsd = rawPerGramUsd * DAMLUNG_GRAMS;
+
+      // Phnom Penh bullion shop model:
+      // Shop Buy (ទិញចូល) is slightly below raw parity; Shop Sell (លក់ចេញ) includes local retail premium/labor
+      const buyDamlungUsd = rawPerDamlungUsd - (shopSpreadDamlung * 0.35);
+      const sellDamlungUsd = rawPerDamlungUsd + (shopSpreadDamlung * 0.65);
+
+      const makeRow = (unitKey, nameEn, nameKm, grams) => {
+        const ratio = grams / DAMLUNG_GRAMS;
+        const buyUsd = buyDamlungUsd * ratio;
+        const sellUsd = sellDamlungUsd * ratio;
+        return {
+          unitKey,
+          nameEn,
+          nameKm,
+          grams,
+          buyUsd,
+          sellUsd,
+          buyKhr: Math.round(buyUsd * usdToKhr),
+          sellKhr: Math.round(sellUsd * usdToKhr)
+        };
+      };
+
+      const rows = [
+        makeRow('damlung', '1 Damlung / Tael (37.5g)', '១ តម្លឹង (37.5 ក្រាម)', DAMLUNG_GRAMS),
+        makeRow('chi', '1 Chi (3.75g)', '១ ជី (3.75 ក្រាម)', CHI_GRAMS),
+        makeRow('gram', '1 Gram (1.00g)', '១ ក្រាម (1.00g)', 1.0),
+        makeRow('ounce', '1 Troy Ounce (31.10g)', '១ អោន (31.10g)', TROY_OZ_GRAMS)
+      ];
+
+      // Also compute 24K 1 Damlung specifically for the header & watchlist
+      const raw24kDamlung = (goldPrice / TROY_OZ_GRAMS) * 0.999 * DAMLUNG_GRAMS;
+      const buy24kDamlung = raw24kDamlung - (shopSpreadDamlung * 0.35);
+      const sell24kDamlung = raw24kDamlung + (shopSpreadDamlung * 0.65);
+
+      return {
+        purity: selectedKhPurity,
+        purityLabel: currentLang === 'km' ? purityObj.labelKm : purityObj.labelEn,
+        shopSpreadDamlung,
+        usdToKhr,
+        rows,
+        buy24kDamlung,
+        sell24kDamlung
+      };
+    }
+
+    function renderCambodiaMarket() {
+      const snap = getCambodiaGoldSnapshot();
+      const damlung = snap.rows[0];
+      const chi = snap.rows[1];
+
+      // Update Header Quick Pill (Always 24K 1 Damlung)
+      const hBuy = document.getElementById('headerKhBuy');
+      const hSell = document.getElementById('headerKhSell');
+      if (hBuy) hBuy.textContent = `$${snap.buy24kDamlung.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+      if (hSell) hSell.textContent = `$${snap.sell24kDamlung.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+
+      // Update Watchlist Cambodia 24K Damlung & USD/KHR items
+      watchlist[1].price = Number(snap.sell24kDamlung.toFixed(2));
+      watchlist[2].price = snap.usdToKhr;
+
+      // Highlight Cards (1 Damlung & 1 Chi)
+      const cardsEl = document.getElementById('khHighlightCards');
+      if (cardsEl) {
+        const cards = [
+          {
+            title: currentLang === 'km' ? `១ តម្លឹង · ${snap.purity}` : `1 Damlung (១ តម្លឹង) · ${snap.purity}`,
+            sub: '37.5 Grams (10 Chi)',
+            data: damlung
+          },
+          {
+            title: currentLang === 'km' ? `១ ជី · ${snap.purity}` : `1 Chi (១ ជី) · ${snap.purity}`,
+            sub: '3.75 Grams (0.1 Damlung)',
+            data: chi
+          }
+        ];
+
+        cardsEl.innerHTML = cards.map(c => `
+          <div class="bg-[#0B0E14] rounded-xl border border-[#2A2E39] p-3.5">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-bold text-amber-400">${c.title}</span>
+              <span class="text-[10px] font-mono text-gray-400">${c.sub}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5 font-mono">
+              <div class="bg-[#131722] rounded-lg p-2.5 border border-emerald-500/25">
+                <div class="text-[10px] font-sans text-gray-400 mb-0.5">${currentLang === 'km' ? 'ហាងទិញចូល (BUY)' : 'MARKET BUY (ទិញចូល)'}</div>
+                <div class="text-base sm:text-lg font-bold text-emerald-400 tabular-nums">$${c.data.buyUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div class="text-[11px] text-gray-400 tabular-nums">៛${c.data.buyKhr.toLocaleString('en-US')}</div>
+              </div>
+              <div class="bg-[#131722] rounded-lg p-2.5 border border-rose-500/25">
+                <div class="text-[10px] font-sans text-gray-400 mb-0.5">${currentLang === 'km' ? 'ហាងលក់ចេញ (SELL)' : 'MARKET SELL (លក់ចេញ)'}</div>
+                <div class="text-base sm:text-lg font-bold text-rose-400 tabular-nums">$${c.data.sellUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div class="text-[11px] text-gray-400 tabular-nums">៛${c.data.sellKhr.toLocaleString('en-US')}</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Full Table Rows
+      const tbody = document.getElementById('khMarketTableBody');
+      if (tbody) {
+        tbody.innerHTML = snap.rows.map(r => `
+          <tr class="hover:bg-[#1E222D] transition">
+            <td class="py-2.5 px-3 font-sans font-semibold text-white">${currentLang === 'km' ? r.nameKm : r.nameEn}</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">$${r.buyUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td class="py-2.5 px-3 text-right text-rose-400 font-bold">$${r.sellUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td class="py-2.5 px-3 text-right text-amber-300">៛${r.sellKhr.toLocaleString('en-US')}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Quick Calculator Output
+      const qty = parseFloat(document.getElementById('khCalcQty')?.value) || 0;
+      const unitKey = document.getElementById('khCalcUnit')?.value || 'damlung';
+      const selectedRow = snap.rows.find(r => r.unitKey === unitKey) || snap.rows[0];
+      const totalBuyUsd = selectedRow.buyUsd * qty;
+      const totalSellUsd = selectedRow.sellUsd * qty;
+      const totalSellKhr = Math.round(totalSellUsd * snap.usdToKhr);
+
+      const calcOut = document.getElementById('khCalcOutput');
+      if (calcOut) {
+        calcOut.innerHTML = `
+          <div>
+            <span class="text-gray-400 font-sans text-[11px]">${t('khShopBuysLabel')}</span>
+            <span class="text-emerald-400 font-bold ml-1">$${totalBuyUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </div>
+          <div>
+            <span class="text-gray-400 font-sans text-[11px]">${t('khShopSellsLabel')}</span>
+            <span class="text-rose-400 font-bold ml-1">$${totalSellUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span class="text-amber-400 text-[11px] ml-1">(៛${totalSellKhr.toLocaleString('en-US')})</span>
+          </div>
+        `;
+      }
+    }
+
+    function getCambodiaLiveDateTime() {
+      const now = new Date();
+      const timeStr = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Phnom_Penh',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(now);
+
+      const dateStr = new Intl.DateTimeFormat(currentLang === 'km' ? 'km-KH' : 'en-US', {
+        timeZone: 'Asia/Phnom_Penh',
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      }).format(now);
+
+      return { timeStr, dateStr };
+    }
+
+    function scrollToCambodiaMarket() {
+      const el = document.getElementById('cambodiaMarketSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     // =========================================================================
     // 2. TECHNICAL INDICATORS MATH (SMA 20 & EMA 50)
@@ -1199,8 +1544,8 @@
         if (c.high > maxPrice) maxPrice = c.high;
       });
 
-      const supportLevel = 3750.00;
-      const resistanceLevel = 3820.50;
+      const supportLevel = 3502.85;
+      const resistanceLevel = 3637.20;
       if (indicators.sr) {
         minPrice = Math.min(minPrice, supportLevel - 10);
         maxPrice = Math.max(maxPrice, resistanceLevel + 10);
@@ -1214,7 +1559,6 @@
       const priceToY = (p) => padTop + ((maxPrice - p) / finalRange) * plotH;
       const yToPrice = (y) => maxPrice - ((y - padTop) / plotH) * finalRange;
 
-      // Grid lines
       ctx.strokeStyle = '#1E222D';
       ctx.lineWidth = 1;
       ctx.font = '11px "JetBrains Mono", monospace';
@@ -1233,7 +1577,6 @@
         ctx.fillText(pVal.toFixed(2), width - padRight + 6, y + 4);
       }
 
-      // Vertical Grid Lines
       const stepX = plotW / candles.length;
       for (let i = 0; i < candles.length; i += 10) {
         const x = padLeft + i * stepX + stepX / 2;
@@ -1249,7 +1592,6 @@
         ctx.fillText(label, x - 14, height - 8);
       }
 
-      // Support & Resistance Zones
       if (indicators.sr) {
         const resY = priceToY(resistanceLevel);
         ctx.save();
@@ -1261,7 +1603,7 @@
         ctx.lineTo(width - padRight, resY);
         ctx.stroke();
         ctx.fillStyle = 'rgba(242, 54, 69, 0.85)';
-        ctx.fillText('R1 3820.5', padLeft + 6, resY - 5);
+        ctx.fillText('R1 3637.2', padLeft + 6, resY - 5);
 
         const supY = priceToY(supportLevel);
         ctx.strokeStyle = 'rgba(8, 153, 129, 0.75)';
@@ -1270,11 +1612,10 @@
         ctx.lineTo(width - padRight, supY);
         ctx.stroke();
         ctx.fillStyle = 'rgba(8, 153, 129, 0.9)';
-        ctx.fillText('S1 3750.0', padLeft + 6, supY - 5);
+        ctx.fillText('S1 3502.8', padLeft + 6, supY - 5);
         ctx.restore();
       }
 
-      // Candlesticks or Line Chart
       if (chartType === 'candle') {
         const candleW = Math.max(2.5, stepX * 0.64);
         candles.forEach((c, i) => {
@@ -1321,7 +1662,6 @@
         ctx.fill();
       }
 
-      // SMA 20
       if (indicators.sma20) {
         const sma = calcSMA(candles, 20);
         ctx.beginPath();
@@ -1338,7 +1678,6 @@
         ctx.stroke();
       }
 
-      // EMA 50
       if (indicators.ema50) {
         const ema = calcEMA(candles, 50);
         ctx.beginPath();
@@ -1355,7 +1694,6 @@
         ctx.stroke();
       }
 
-      // Current Live Price Dashed Line & Right Axis Tag
       const lastCandle = candles[candles.length - 1];
       const liveY = priceToY(lastCandle.close);
       const isUp = lastCandle.close >= lastCandle.open;
@@ -1377,7 +1715,6 @@
       ctx.font = 'bold 11px "JetBrains Mono", monospace';
       ctx.fillText(lastCandle.close.toFixed(2), width - padRight + 6, liveY + 4);
 
-      // Crosshair on Hover
       if (hoverIndex >= 0 && hoverIndex < candles.length) {
         const hc = candles[hoverIndex];
         const hx = padLeft + hoverIndex * stepX + stepX / 2;
@@ -1496,8 +1833,8 @@
     // =========================================================================
     function fillCurrentPrice() {
       document.getElementById('calcEntry').value = goldPrice.toFixed(2);
-      document.getElementById('calcSL').value = (goldPrice - 16.50).toFixed(2);
-      document.getElementById('calcTP').value = (goldPrice + 42.00).toFixed(2);
+      document.getElementById('calcSL').value = (goldPrice - 18.00).toFixed(2);
+      document.getElementById('calcTP').value = (goldPrice + 46.00).toFixed(2);
       calculateRisk();
       showToast(currentLang === 'km'
         ? `បានធ្វើបច្ចុប្បន្នភាពតម្លៃចូលទិញ XAU/USD: $${goldPrice.toFixed(2)}`
@@ -1575,6 +1912,8 @@
           ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25'
           : 'bg-rose-500/15 text-rose-400 border-rose-500/25';
 
+        const prefix = item.symbol === 'USD/KHR' ? '៛' : '$';
+
         return `
           <div class="px-4 py-3 flex items-center justify-between hover:bg-[#1E222D] transition">
             <div class="flex items-center gap-3">
@@ -1587,7 +1926,7 @@
               </div>
             </div>
             <div class="text-right font-mono">
-              <div class="text-white font-semibold text-xs sm:text-sm tabular-nums">${item.price.toFixed(item.decimals)}</div>
+              <div class="text-white font-semibold text-xs sm:text-sm tabular-nums">${prefix}${item.price.toLocaleString('en-US', { minimumFractionDigits: item.decimals, maximumFractionDigits: item.decimals })}</div>
               <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold border ${badgeClass} tabular-nums">
                 ${isPos ? '+' : ''}${pct.toFixed(2)}%
               </span>
@@ -1618,7 +1957,7 @@
     function updateMarketTick() {
       if (!isLive) return;
 
-      const tickDelta = (Math.random() - 0.495) * 1.45;
+      const tickDelta = (Math.random() - 0.495) * 1.35;
       goldPrice = Number((goldPrice + tickDelta).toFixed(2));
       if (goldPrice > goldHigh24h) goldHigh24h = goldPrice;
       if (goldPrice < goldLow24h) goldLow24h = goldPrice;
@@ -1632,9 +1971,6 @@
       headerPriceEl.textContent = goldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       headerChangeEl.textContent = `${isPos ? '+' : ''}${diff.toFixed(2)} (${isPos ? '+' : ''}${pct.toFixed(2)}%)`;
       headerChangeEl.className = `font-mono text-xs font-semibold tabular-nums ${isPos ? 'text-[#089981]' : 'text-[#F23645]'}`;
-
-      document.getElementById('headerHigh').textContent = goldHigh24h.toLocaleString('en-US', { minimumFractionDigits: 2 });
-      document.getElementById('headerLow').textContent = goldLow24h.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
       updateHeaderSentiment();
 
@@ -1652,11 +1988,12 @@
       }
 
       watchlist[0].price = goldPrice;
-      for (let i = 1; i < watchlist.length; i++) {
-        const step = watchlist[i].decimals === 4 ? 0.0003 : watchlist[i].price * 0.0006;
+      for (let i = 3; i < watchlist.length; i++) {
+        const step = watchlist[i].price * 0.0006;
         watchlist[i].price = Number((watchlist[i].price + (Math.random() - 0.5) * step).toFixed(watchlist[i].decimals));
       }
 
+      renderCambodiaMarket();
       renderWatchlist();
       evaluateMarketSignal();
       renderDayAnalyst();
@@ -1695,10 +2032,10 @@
           id: 1,
           tag: 'ALERT',
           text: currentLang === 'km'
-            ? 'តាមដានតំបន់ទម្រ 3,750.00 ប្រចាំថ្ងៃ សម្រាប់សញ្ញាទៀន Hammer ងើបឡើងវិញ។'
-            : 'Watch 3,750.00 daily support zone for bullish Hammer reversal candle.',
-          price: '3,771.46',
-          time: 'Today, 14:30'
+            ? 'តាមដានតំបន់ទម្រ 3,502.85 ប្រចាំថ្ងៃ សម្រាប់សញ្ញាទៀនងើបឡើងវិញ មុននឹងទិញមាសនៅភ្នំពេញ។'
+            : 'Watch 3,502.85 daily support zone for bullish reversal before buying Phnom Penh bullion.',
+          price: '3,538.26',
+          time: 'Today, 13:44 ICT'
         },
         {
           id: 2,
@@ -1706,7 +2043,7 @@
           text: currentLang === 'km'
             ? 'ជៀសវាងការចូលទិញពេលតម្លៃកំពុងធ្លាក់ខ្លាំង 1D; រង់ចាំក្រាហ្វ 1H ទ្រឹងសិន។'
             : 'Avoid catching falling knives on 1D downtrend; wait for 1H consolidation.',
-          price: '3,785.00',
+          price: '3,622.90',
           time: 'Yesterday'
         }
       ];
@@ -1754,13 +2091,13 @@
       if (!text) return;
 
       const entries = getSavedEntries();
-      const now = new Date();
+      const khClock = getCambodiaLiveDateTime();
       entries.unshift({
         id: Date.now(),
         tag,
         text,
         price: goldPrice.toFixed(2),
-        time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        time: `${khClock.timeStr} ICT`
       });
 
       try {
@@ -1833,46 +2170,42 @@
     }
 
     // =========================================================================
-    // 9. NEW MODULE: BUY TODAY VS. WHICH DAY ANALYST ENGINE
+    // 9. BUY TODAY VS. WHICH DAY ANALYST ENGINE
     // =========================================================================
-    let selectedAnalystDayIdx = null; // 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri
+    let selectedAnalystDayIdx = null;
 
     const DAY_ANALYST_PROFILES = {
       1: {
         dayIdx: 1,
         nameEn: 'Monday',
         nameKm: 'ថ្ងៃច័ន្ទ',
-        shortEn: 'MON',
-        shortKm: 'ច័ន្ទ',
         winRate: '54%',
         baseScore: 55,
         liquidityEn: 'Low–Moderate',
         liquidityKm: 'មធ្យម / តិច',
         verdictEn: 'WAIT / OBSERVE',
         verdictKm: 'រង់ចាំ / តាមដាន',
-        windowEn: '13:00 – 16:00 UTC',
-        windowKm: 'ម៉ោង 13:00 – 16:00 UTC',
-        zoneEn: '$3,745 – $3,755 (Support Sweep)',
-        zoneKm: '$3,745 – $3,755 (តំបន់ទម្រ)',
-        descEn: 'Monday opens with Asian range consolidation and frequent London false breakouts ("Judas Swings"). Institutional desks usually wait until Tuesday to commit major buy volume.',
+        windowEn: '20:00 – 23:00 KH (13–16 UTC)',
+        windowKm: 'ម៉ោង 20:00 – 23:00 កម្ពុជា',
+        zoneEn: '$3,500 – $3,515 (Support Sweep)',
+        zoneKm: '$3,500 – $3,515 (តំបន់ទម្រ)',
+        descEn: 'Monday opens with Asian range consolidation and frequent London false breakouts. Institutional desks usually wait until Tuesday to commit major buy volume.',
         descKm: 'ថ្ងៃច័ន្ទច្រើនតែមានចលនារុញតម្លៃបញ្ឆោតនៅពេលបើកទីផ្សារ London។ ស្ថាប័នធំៗច្រើនរង់ចាំដល់ថ្ងៃអង្គារទើបបញ្ចេញទុនទិញពិតប្រាកដ។'
       },
       2: {
         dayIdx: 2,
         nameEn: 'Tuesday',
         nameKm: 'ថ្ងៃអង្គារ',
-        shortEn: 'TUE',
-        shortKm: 'អង្គារ',
         winRate: '78%',
         baseScore: 86,
         liquidityEn: 'High Institutional',
         liquidityKm: 'សន្ទុះស្ថាប័នខ្ពស់',
         verdictEn: 'PRIME BUY DAY ★',
         verdictKm: 'ថ្ងៃទិញល្អបំផុត ★',
-        windowEn: '12:00 – 16:00 UTC (Overlap)',
-        windowKm: 'ម៉ោង 12:00 – 16:00 UTC',
-        zoneEn: '$3,750 – $3,765 (Pullback Buy)',
-        zoneKm: '$3,750 – $3,765 (ទិញពេលចុះសម្រួល)',
+        windowEn: '19:00 – 23:00 KH (12–16 UTC)',
+        windowKm: 'ម៉ោង 19:00 – 23:00 កម្ពុជា',
+        zoneEn: '$3,505 – $3,525 (Pullback Buy)',
+        zoneKm: '$3,505 – $3,525 (ទិញពេលចុះសម្រួល)',
         descEn: 'Tuesday is statistically one of the highest-probability days to buy XAU/USD. Once Monday establishes the weekly low, institutional buyers step in during the London–NY Overlap.',
         descKm: 'ថ្ងៃអង្គារគឺជាថ្ងៃដែលមានឱកាសចំណេញខ្ពស់បំផុតមួយសម្រាប់ទិញមាស បន្ទាប់ពីថ្ងៃច័ន្ទបានបង្កើតបាតតម្លៃប្រចាំសប្តាហ៍រួចរាល់។'
       },
@@ -1880,18 +2213,16 @@
         dayIdx: 3,
         nameEn: 'Wednesday',
         nameKm: 'ថ្ងៃពុធ',
-        shortEn: 'WED',
-        shortKm: 'ពុធ',
         winRate: '81%',
         baseScore: 90,
         liquidityEn: 'Peak Mid-Week',
         liquidityKm: 'សន្ទុះខ្លាំងបំផុតកណ្តាលសប្តាហ៍',
         verdictEn: 'BEST BUY DAY ★',
         verdictKm: 'ថ្ងៃល្អឯកសម្រាប់ទិញ ★',
-        windowEn: '12:00 – 16:00 UTC (Overlap)',
-        windowKm: 'ម៉ោង 12:00 – 16:00 UTC',
-        zoneEn: '$3,755 – $3,770 (Trend Continuation)',
-        zoneKm: '$3,755 – $3,770 (ទិញតាមនិន្នាការ)',
+        windowEn: '19:00 – 23:00 KH (12–16 UTC)',
+        windowKm: 'ម៉ោង 19:00 – 23:00 កម្ពុជា',
+        zoneEn: '$3,510 – $3,530 (Trend Continuation)',
+        zoneKm: '$3,510 – $3,530 (ទិញតាមនិន្នាការ)',
         descEn: 'Wednesday delivers peak mid-week liquidity and clean directional follow-through. Ideal day to scale into confirmed bullish setups above SMA 20.',
         descKm: 'ថ្ងៃពុធផ្តល់នូវទំហំជួញដូរកណ្តាលសប្តាហ៍ខ្ពស់បំផុត និងនិន្នាការច្បាស់លាស់ ល្អបំផុតសម្រាប់ចូលទិញនៅពេលតម្លៃឈរលើ SMA 20។'
       },
@@ -1899,35 +2230,31 @@
         dayIdx: 4,
         nameEn: 'Thursday',
         nameKm: 'ថ្ងៃព្រហស្បតិ៍',
-        shortEn: 'THU',
-        shortKm: 'ព្រហស្បតិ៍',
         winRate: '76%',
         baseScore: 82,
         liquidityEn: 'High (US Data)',
         liquidityKm: 'ខ្ពស់ (ព័ត៌មានសេដ្ឋកិច្ចអាមេរិក)',
         verdictEn: 'GOOD BUY (IF TREND ALIGNS)',
         verdictKm: 'អាចទិញបាន (បើនិន្នាការត្រូវ)',
-        windowEn: '12:30 – 16:00 UTC',
-        windowKm: 'ម៉ោង 12:30 – 16:00 UTC',
-        zoneEn: '$3,750 – $3,762 (Reversal Confirmation)',
-        zoneKm: '$3,750 – $3,762 (បញ្ជាក់ការងើបឡើង)',
-        descEn: 'Thursday offers strong continuation or mid-week reversal entries following US Jobless Claims, provided price holds above key daily support ($3,750).',
-        descKm: 'ថ្ងៃព្រហស្បតិ៍ផ្តល់ឱកាសទិញបន្តនិន្នាការ ឬងើបឡើងវិញបន្ទាប់ពីព័ត៌មានសេដ្ឋកិច្ចអាមេរិក ប្រសិនបើតម្លៃឈរលើទម្រ $3,750។'
+        windowEn: '19:30 – 23:00 KH (12:30–16 UTC)',
+        windowKm: 'ម៉ោង 19:30 – 23:00 កម្ពុជា',
+        zoneEn: '$3,505 – $3,520 (Reversal Confirmation)',
+        zoneKm: '$3,505 – $3,520 (បញ្ជាក់ការងើបឡើង)',
+        descEn: 'Thursday offers strong continuation or mid-week reversal entries following US Jobless Claims, provided price holds above key daily support ($3,502.85).',
+        descKm: 'ថ្ងៃព្រហស្បតិ៍ផ្តល់ឱកាសទិញបន្តនិន្នាការ ឬងើបឡើងវិញបន្ទាប់ពីព័ត៌មានសេដ្ឋកិច្ចអាមេរិក ប្រសិនបើតម្លៃឈរលើទម្រ $3,502.85។'
       },
       5: {
         dayIdx: 5,
         nameEn: 'Friday',
         nameKm: 'ថ្ងៃសុក្រ',
-        shortEn: 'FRI',
-        shortKm: 'សុក្រ',
         winRate: '58%',
         baseScore: 50,
         liquidityEn: 'Volatile / Profit-Taking',
         liquidityKm: 'ប្រែប្រួលខ្លាំង / បិទយកចំណេញ',
         verdictEn: 'CAUTION / SCALP ONLY',
         verdictKm: 'ប្រុងប្រយ័ត្ន / ជួញដូររយៈពេលខ្លី',
-        windowEn: '12:00 – 14:30 UTC',
-        windowKm: 'ម៉ោង 12:00 – 14:30 UTC',
+        windowEn: '19:00 – 21:30 KH (12–14:30 UTC)',
+        windowKm: 'ម៉ោង 19:00 – 21:30 កម្ពុជា',
         zoneEn: 'Quick Scalps Only — Avoid Holding',
         zoneKm: 'ជួញដូររយៈពេលខ្លីប៉ុណ្ណោះ — កុំទុកឆ្លងសប្តាហ៍',
         descEn: 'Friday often experiences sudden institutional profit-taking and weekend hedging spikes. Avoid opening new swing buy positions late Friday; wait for Tuesday.',
@@ -1937,8 +2264,8 @@
 
     function getDayAnalystSummary() {
       const now = new Date();
-      const utcDay = now.getUTCDay(); // 0=Sun..6=Sat
-      const effectiveTodayIdx = (utcDay >= 1 && utcDay <= 5) ? utcDay : 2; // Default comparison to Tuesday if weekend
+      const utcDay = now.getUTCDay();
+      const effectiveTodayIdx = (utcDay >= 1 && utcDay <= 5) ? utcDay : 2;
       const todayProfile = DAY_ANALYST_PROFILES[effectiveTodayIdx];
 
       const isWeekend = utcDay === 0 || utcDay === 6;
@@ -1947,18 +2274,16 @@
 
       const actualTodayName = currentLang === 'km' ? dayNamesKm[utcDay] : dayNamesEn[utcDay];
 
-      // Compute dynamic Today Buy Readiness Score (0-100) combining day-of-week quality + live technical signal
       let techBonus = 0;
       if (currentSignalState.actionCode === 'BUY') techBonus = 15;
       else if (currentSignalState.actionCode === 'CAUTION') techBonus = -15;
-      else techBonus = -35; // Strong bearish pressure lowers today's buy score
+      else techBonus = -35;
 
-      const todayScore = isWeekend ? 20 : Math.max(15, Math.min(96, todayProfile.baseScore + techBonus));
+      const todayScore = isWeekend ? 25 : Math.max(15, Math.min(96, todayProfile.baseScore + techBonus));
       const shouldBuyToday = !isWeekend && todayScore >= 72 && currentSignalState.actionCode === 'BUY';
 
-      // Decide Which Day is Best to Buy
-      let bestTargetEn = 'Tuesday / Wednesday';
-      let bestTargetKm = 'ថ្ងៃអង្គារ ឬ ថ្ងៃពុធ';
+      let bestTargetEn = 'Upcoming Tuesday – Wednesday';
+      let bestTargetKm = 'ថ្ងៃអង្គារ – ថ្ងៃពុធ ខាងមុខនេះ';
       if (shouldBuyToday) {
         bestTargetEn = `TODAY (${dayNamesEn[utcDay]})`;
         bestTargetKm = `ថ្ងៃនេះ (${dayNamesKm[utcDay]})`;
@@ -1971,9 +2296,6 @@
       } else if (utcDay === 3 || utcDay === 4) {
         bestTargetEn = 'Next Tuesday / Wednesday (or 1H Reclaim)';
         bestTargetKm = 'ថ្ងៃអង្គារ / ថ្ងៃពុធ សប្តាហ៍ក្រោយ';
-      } else {
-        bestTargetEn = 'Upcoming Tuesday – Wednesday';
-        bestTargetKm = 'ថ្ងៃអង្គារ – ថ្ងៃពុធ ខាងមុខនេះ';
       }
 
       return {
@@ -2015,20 +2337,19 @@
             ? '<i class="fa-solid fa-circle-check"></i><span>គួរទិញថ្ងៃនេះ — លក្ខខណ្ឌអំណោយផល</span>'
             : '<i class="fa-solid fa-circle-check"></i><span>YES — FAVORABLE TO BUY TODAY</span>';
           todayExpEl.textContent = currentLang === 'km'
-            ? `ថ្ងៃនេះ (${summary.actualTodayName}) ស្ថិតក្នុងថ្ងៃជួញដូរស្ថាប័នល្អ ហើយតម្លៃឈរលើ SMA 20 & EMA 50។ អាចចូលទិញក្នុងម៉ោង 12:00–16:00 UTC។`
-            : `Today (${summary.actualTodayName}) aligns with prime institutional liquidity and bullish MA structure. Look for pullback entries during 12:00–16:00 UTC.`;
+            ? `ថ្ងៃនេះ (${summary.actualTodayName}) ស្ថិតក្នុងថ្ងៃជួញដូរស្ថាប័នល្អ ហើយតម្លៃឈរលើ SMA 20 & EMA 50។ អាចចូលទិញក្នុងម៉ោង 19:00–23:00 កម្ពុជា។`
+            : `Today (${summary.actualTodayName}) aligns with prime institutional liquidity and bullish MA structure. Look for pullback entries during 19:00–23:00 Cambodia time.`;
         } else {
           verdictBadgeEl.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 mb-2.5';
           verdictBadgeEl.innerHTML = currentLang === 'km'
             ? '<i class="fa-solid fa-hand"></i><span>កុំទាន់ទិញថ្ងៃនេះ — រង់ចាំថ្ងៃល្អជាង</span>'
             : '<i class="fa-solid fa-hand"></i><span>WAIT — DO NOT BUY TODAY</span>';
           todayExpEl.textContent = currentLang === 'km'
-            ? `ទោះបីថ្ងៃនេះជា ${summary.actualTodayName} ក៏ដោយ ប៉ុន្តែតម្លៃ XAU/USD ($${goldPrice.toFixed(2)}) នៅក្រោម SMA 20 ក្រោមសម្ពាធធ្លាក់ចុះ។ គួររង់ចាំ ${summary.bestTargetKm} ឬទាល់តែតម្លៃឡើងផុត SMA 20។`
-            : `Although today is ${summary.actualTodayName}, XAU/USD ($${goldPrice.toFixed(2)}) remains below SMA 20 under bearish pressure. Wait for ${summary.bestTargetEn} or a confirmed SMA 20 reclaim.`;
+            ? `ថ្ងៃនេះជា ${summary.actualTodayName} ហើយតម្លៃ XAU/USD ($${goldPrice.toFixed(2)}) នៅក្រោម SMA 20 ក្រោមសម្ពាធធ្លាក់ចុះ។ គួររង់ចាំ ${summary.bestTargetKm} ឬទាល់តែតម្លៃឡើងផុត SMA 20។`
+            : `Today is ${summary.actualTodayName} and XAU/USD ($${goldPrice.toFixed(2)}) remains below SMA 20 under bearish pressure. Wait for ${summary.bestTargetEn} or a confirmed SMA 20 reclaim.`;
         }
       }
 
-      // Update Which Day Card
       const bestTitleEl = document.getElementById('analystBestDayTitle');
       const bestTagEl = document.getElementById('analystBestDayTag');
       const whichReasonEl = document.getElementById('analystWhichDayReason');
@@ -2041,13 +2362,12 @@
       }
       if (whichReasonEl) {
         whichReasonEl.textContent = currentLang === 'km'
-          ? 'តាមស្ថិតិទីផ្សារមាស ថ្ងៃអង្គារ ដល់ ថ្ងៃពុធ (ម៉ោង 12:00–16:00 UTC) គឺជាពេលដែលធនាគារ និងស្ថាប័នធំៗបញ្ចេញទុនទិញច្បាស់លាស់បំផុត បន្ទាប់ពីថ្ងៃច័ន្ទបញ្ចប់ការរុញតម្លៃបញ្ឆោត។'
-          : 'Historically, Tuesday & Wednesday (12:00–16:00 UTC) produce the cleanest institutional Gold reversals and trend breakouts once Monday’s false moves clear out.';
+          ? 'តាមស្ថិតិទីផ្សារមាស ថ្ងៃអង្គារ ដល់ ថ្ងៃពុធ (ម៉ោង 19:00–23:00 កម្ពុជា / 12:00–16:00 UTC) គឺជាពេលដែលធនាគារ និងស្ថាប័នធំៗបញ្ចេញទុនទិញច្បាស់លាស់បំផុត។'
+          : 'Historically, Tuesday & Wednesday (19:00–23:00 Cambodia / 12:00–16:00 UTC) produce the cleanest institutional Gold reversals and trend breakouts.';
       }
-      if (targetZoneEl) targetZoneEl.textContent = '$3,750 – $3,762';
+      if (targetZoneEl) targetZoneEl.textContent = '$3,505 – $3,525';
       if (triggerEl) triggerEl.textContent = currentLang === 'km' ? 'ទៀន 1H បិទលើ SMA20' : '1H Close > SMA20';
 
-      // Render 5 Day Tabs
       const tabsContainer = document.getElementById('dayAnalystTabs');
       if (tabsContainer) {
         tabsContainer.innerHTML = [1, 2, 3, 4, 5].map(idx => {
@@ -2076,7 +2396,6 @@
         }).join('');
       }
 
-      // Render Selected Day Deep-Dive Box
       const detailBox = document.getElementById('selectedDayDetailBox');
       if (detailBox) {
         const sel = DAY_ANALYST_PROFILES[selectedAnalystDayIdx] || DAY_ANALYST_PROFILES[2];
@@ -2125,8 +2444,8 @@
       verdict: 'WAIT / DO NOT BUY (High Risk)',
       actionCode: 'WAIT',
       riskLevel: 'HIGH RISK',
-      confidence: 82,
-      rsi: 31.4,
+      confidence: 84,
+      rsi: 29.8,
       maAlignment: 'BEARISH',
       reason: 'Price is trading below SMA 20 & EMA 50 under daily bearish pressure. Avoid buying until reversal confirmation.'
     };
@@ -2204,10 +2523,10 @@
         verdict = currentLang === 'km' ? 'ប្រុងប្រយ័ត្ន (តម្លៃទាបជ្រុល)' : 'SCALP / CAUTION (Oversold Watch)';
         badgeClass = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30';
         iconClass = 'fa-solid fa-triangle-exclamation';
-        confidence = 72;
+        confidence = 74;
         reason = currentLang === 'km'
-          ? `RSI ស្ថិតក្នុងកម្រិតលក់ជ្រុល (${rsi.toFixed(1)}) ដូច្នេះអាចមានការងើបឡើងវិញខ្លីនៅក្បែរទម្រ $3,750 ប៉ុន្តែនិន្នាការធំនៅតែចុះថ្លៃក្រោម SMA 20 ($${latestSma20.toFixed(1)})។`
-          : `RSI is oversold (${rsi.toFixed(1)}), so a technical bounce may occur near $3,750 support, but primary daily trend remains bearish below SMA 20 ($${latestSma20.toFixed(1)}).`;
+          ? `RSI ស្ថិតក្នុងកម្រិតលក់ជ្រុល (${rsi.toFixed(1)}) ដូច្នេះអាចមានការងើបឡើងវិញខ្លីនៅក្បែរទម្រ $3,502.85 ប៉ុន្តែនិន្នាការធំនៅតែចុះថ្លៃក្រោម SMA 20 ($${latestSma20.toFixed(1)})។`
+          : `RSI is oversold (${rsi.toFixed(1)}), so a technical bounce may occur near $3,502.85 support, but primary daily trend remains bearish below SMA 20 ($${latestSma20.toFixed(1)}).`;
       } else {
         actionCode = 'WAIT';
         verdict = currentLang === 'km' ? 'រង់ចាំ / កុំទាន់ទិញ (ហានិភ័យខ្ពស់)' : 'WAIT / DO NOT BUY (High Risk)';
@@ -2280,19 +2599,19 @@
         : 'Low liquidity rollover window. Spreads widen; avoid new entries.';
 
       if (utcDay === 0 || utcDay === 6) {
-        activeSessionName = currentLang === 'km' ? 'ទីផ្សារបិទចុងសប្តាហ៍' : 'Weekend Market Closed';
+        activeSessionName = currentLang === 'km' ? 'ទីផ្សារអន្តរជាតិបិទចុងសប្តាហ៍ (ហាងមាសខ្មែរបើក)' : 'Weekend Spot Closed (KH Shops Open)';
         sessionAdvice = currentLang === 'km'
-          ? 'ទីផ្សារមាស XAU/USD បិទដំណើរការ។ សូមរៀបចំផែនការសម្រាប់ថ្ងៃអង្គារ–ព្រហស្បតិ៍។'
-          : 'Spot XAU/USD is closed. Prepare levels for Tuesday–Thursday prime sessions.';
+          ? 'ទីផ្សារ XAU/USD អន្តរជាតិបិទចុងសប្តាហ៍ ប៉ុន្តែហាងមាសនៅភ្នំពេញបើកលក់-ទិញធម្មតា។'
+          : 'Global XAU/USD is closed for the weekend, while Phnom Penh gold shops remain open.';
       } else if (isOverlap) {
-        activeSessionName = currentLang === 'km' ? 'ម៉ោង London–NY Overlap (ម៉ោងមាស)' : 'London–NY Overlap (PRIME WINDOW)';
+        activeSessionName = currentLang === 'km' ? 'ម៉ោង London–NY Overlap (19:00–23:00 កម្ពុជា)' : 'London–NY Overlap (PRIME WINDOW)';
         sessionAdvice = currentLang === 'km'
           ? 'សន្ទុះទីផ្សារមាសខ្លាំងបំផុត និង Spread តូចបំផុត។ ជាម៉ោងល្អបំផុតសម្រាប់ចូលទិញពេលមានសញ្ញាបញ្ជាក់។'
           : 'Highest Gold liquidity & tightest spreads. Best window to join confirmed breakouts/reversals.';
       } else if (isLondon) {
-        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារ London (សន្ទុះខ្ពស់)' : 'London Session (High Liquidity)';
+        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារ London (14:00–23:00 កម្ពុជា)' : 'London Session (High Liquidity)';
         sessionAdvice = currentLang === 'km'
-          ? 'ចាប់ផ្តើមមានសន្ទុះពីស្ថាប័នអឺរ៉ុប។ ប្រយ័ត្នចលនាបញ្ឆោតមុនម៉ោង 12:00 UTC។'
+          ? 'ចាប់ផ្តើមមានសន្ទុះពីស្ថាប័នអឺរ៉ុប។ ប្រយ័ត្នចលនាបញ្ឆោតមុនម៉ោង 19:00 កម្ពុជា។'
           : 'Strong institutional trend initiation. Watch for fakeouts before 12:00 UTC overlap.';
       } else if (isNY) {
         activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារ New York' : 'New York Session';
@@ -2300,10 +2619,10 @@
           ? 'ប្រែប្រួលខ្លាំងតាមព័ត៌មានសេដ្ឋកិច្ចអាមេរិក (CPI/NFP/FOMC)។ ត្រូវដាក់ Stop Loss ជានិច្ច។'
           : 'US macro data volatility (CPI/NFP/FOMC). Trade with strict Stop Loss.';
       } else if (isAsian) {
-        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារអាស៊ី (តម្លៃដើរក្នុងប្រអប់)' : 'Asian Session (Range-Bound)';
+        activeSessionName = currentLang === 'km' ? 'វគ្គទីផ្សារអាស៊ី (07:00–15:00 កម្ពុជា)' : 'Asian Session (Range-Bound)';
         sessionAdvice = currentLang === 'km'
-          ? 'ទីផ្សារដើរយឺតៗ។ ល្អសម្រាប់គូសកម្រិត S/R ប៉ុន្តែកុំទាន់ទិញដេញថ្លៃ។'
-          : 'Low volatility consolidation. Mark support/resistance levels; avoid breakout buys.';
+          ? 'ទីផ្សារដើរយឺតៗ។ ល្អសម្រាប់តាមដានហាងឆេងមាសនៅភ្នំពេញ។'
+          : 'Low volatility consolidation. Good for tracking Phnom Penh retail gold rates.';
       }
 
       const dayNamesEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -2321,19 +2640,28 @@
 
     function updateSessionClock() {
       const ctx = getTimingContext();
+      const khDt = getCambodiaLiveDateTime();
       const utcStr = `${String(ctx.utcH).padStart(2, '0')}:${String(ctx.utcM).padStart(2, '0')}:${String(ctx.utcS).padStart(2, '0')} UTC`;
-      const localStr = ctx.now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
+      // Update all Live Cambodia Clocks across Header, Cambodia Section, and Timing Section
+      const headerKhClock = document.getElementById('headerKhClock');
+      const headerKhDate = document.getElementById('headerKhDate');
+      const khSectionClock = document.getElementById('khSectionClock');
+      const khSectionDate = document.getElementById('khSectionDate');
       const utcEl = document.getElementById('utcClock');
       const localEl = document.getElementById('localClock');
       const cdEl = document.getElementById('overlapCountdown');
 
+      if (headerKhClock) headerKhClock.textContent = `${khDt.timeStr} ICT`;
+      if (headerKhDate) headerKhDate.textContent = khDt.dateStr;
+      if (khSectionClock) khSectionClock.textContent = `${khDt.timeStr} ICT`;
+      if (khSectionDate) khSectionDate.textContent = khDt.dateStr;
       if (utcEl) utcEl.textContent = utcStr;
-      if (localEl) localEl.textContent = localStr;
+      if (localEl) localEl.textContent = `${khDt.timeStr} ICT`;
 
       if (cdEl) {
         if (ctx.utcDay === 0 || ctx.utcDay === 6) {
-          cdEl.textContent = currentLang === 'km' ? 'បើកថ្ងៃច័ន្ទ 00:00 UTC' : 'Opens Mon 00:00 UTC';
+          cdEl.textContent = currentLang === 'km' ? 'បើកថ្ងៃច័ន្ទ 07:00 កម្ពុជា' : 'Opens Mon 07:00 ICT';
           cdEl.className = 'text-gray-400 font-bold';
         } else if (ctx.isOverlap) {
           const remMins = (15 - ctx.utcH) * 60 + (59 - ctx.utcM);
@@ -2356,17 +2684,17 @@
       const sessions = [
         {
           name: currentLang === 'km' ? 'វគ្គទីផ្សារអាស៊ី (Asian)' : 'Asian Session',
-          hours: '00:00 – 08:00 UTC',
+          hours: '07:00 – 15:00 KH (00–08 UTC)',
           active: ctx.isAsian && ctx.utcDay >= 1 && ctx.utcDay <= 5,
           badge: currentLang === 'km' ? 'ប្រែប្រួលតិច' : 'LOW VOLATILITY',
           badgeColor: 'text-sky-400 bg-sky-500/10 border-sky-500/25',
           desc: currentLang === 'km'
-            ? 'តម្លៃដើរក្នុងប្រអប់តូច។ ល្អសម្រាប់គូសកម្រិត S/R ប៉ុន្តែជៀសវាងការទិញដេញថ្លៃ។'
-            : 'Range-bound accumulation. Good for marking S/R levels; avoid breakout buys.'
+            ? 'តម្លៃដើរក្នុងប្រអប់តូច។ ល្អសម្រាប់តាមដានហាងឆេងមាសនៅភ្នំពេញ។'
+            : 'Range-bound accumulation. Good for marking S/R levels & Phnom Penh shop quotes.'
         },
         {
           name: currentLang === 'km' ? 'វគ្គទីផ្សារ London' : 'London Session',
-          hours: '07:00 – 16:00 UTC',
+          hours: '14:00 – 23:00 KH (07–16 UTC)',
           active: ctx.isLondon && !ctx.isOverlap && ctx.utcDay >= 1 && ctx.utcDay <= 5,
           badge: currentLang === 'km' ? 'ចាប់ផ្តើមនិន្នាការ' : 'TREND START',
           badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/25',
@@ -2376,7 +2704,7 @@
         },
         {
           name: currentLang === 'km' ? 'London–NY Overlap' : 'London–NY Overlap',
-          hours: '12:00 – 16:00 UTC',
+          hours: '19:00 – 23:00 KH (12–16 UTC)',
           active: ctx.isOverlap && ctx.utcDay >= 1 && ctx.utcDay <= 5,
           badge: currentLang === 'km' ? '★ ម៉ោងល្អបំផុត' : '★ PRIME WINDOW',
           badgeColor: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/35',
@@ -2386,7 +2714,7 @@
         },
         {
           name: currentLang === 'km' ? 'វគ្គទីផ្សារ New York' : 'New York Session',
-          hours: '12:00 – 21:00 UTC',
+          hours: '19:00 – 04:00 KH (12–21 UTC)',
           active: ctx.isNY && !ctx.isOverlap && ctx.utcDay >= 1 && ctx.utcDay <= 5,
           badge: currentLang === 'km' ? 'ព័ត៌មានសេដ្ឋកិច្ចអាមេរិក' : 'US NEWS DRIVEN',
           badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/25',
@@ -2468,7 +2796,7 @@
     }
 
     // =========================================================================
-    // 11. TELEGRAM BOT API INTEGRATION (BILINGUAL MESSAGES)
+    // 11. TELEGRAM BOT API INTEGRATION (INCLUDES CAMBODIA GOLD RATES)
     // =========================================================================
     const TG_STORAGE_KEY = 'aureus_telegram_config_v1';
 
@@ -2577,7 +2905,8 @@
           throw new Error(data.description || 'Telegram API rejected the request');
         }
 
-        const stamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const khDt = getCambodiaLiveDateTime();
+        const stamp = `${khDt.timeStr} ICT`;
         document.getElementById('tgLastSent').textContent = `${t('lastSentPrefix')} ${stamp}`;
         try {
           const existing = JSON.parse(localStorage.getItem(TG_STORAGE_KEY) || '{}');
@@ -2597,16 +2926,64 @@
       }
     }
 
+    async function sendCambodiaMarketToTelegram() {
+      const snap = getCambodiaGoldSnapshot();
+      const khDt = getCambodiaLiveDateTime();
+      const damlung = snap.rows[0];
+      const chi = snap.rows[1];
+      const gram = snap.rows[2];
+
+      const msg = currentLang === 'km'
+        ? [
+            `🇰🇭 <b>ហាងឆេងមាសនៅកម្ពុជាផ្ទាល់ (ភ្នំពេញ · ${snap.purity})</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `🕒 <b>ម៉ោងនៅកម្ពុជា៖</b> ${khDt.dateStr} · ${khDt.timeStr} ICT`,
+            `💰 <b>មាសសកល XAU/USD៖</b> $${goldPrice.toFixed(2)}/oz`,
+            ``,
+            `🔸 <b>១ តម្លឹង (37.5g):</b>`,
+            `• ហាងទិញចូល៖ <b>$${damlung.buyUsd.toFixed(2)}</b> (៛${damlung.buyKhr.toLocaleString('en-US')})`,
+            `• ហាងលក់ចេញ៖ <b>$${damlung.sellUsd.toFixed(2)}</b> (៛${damlung.sellKhr.toLocaleString('en-US')})`,
+            ``,
+            `🔸 <b>១ ជី (3.75g):</b>`,
+            `• ហាងទិញចូល៖ <b>$${chi.buyUsd.toFixed(2)}</b> | លក់ចេញ៖ <b>$${chi.sellUsd.toFixed(2)}</b>`,
+            `🔸 <b>១ ក្រាម (1g):</b>`,
+            `• ហាងទិញចូល៖ <b>$${gram.buyUsd.toFixed(2)}</b> | លក់ចេញ៖ <b>$${gram.sellUsd.toFixed(2)}</b>`
+          ].join('\n')
+        : [
+            `🇰🇭 <b>CAMBODIA LIVE GOLD MARKET (PHNOM PENH · ${snap.purity})</b>`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `🕒 <b>Cambodia Time:</b> ${khDt.dateStr} · ${khDt.timeStr} ICT`,
+            `💰 <b>Global Spot XAU/USD:</b> $${goldPrice.toFixed(2)}/oz`,
+            ``,
+            `🔸 <b>1 Damlung / Tael (37.5g):</b>`,
+            `• Market Buy (ទិញចូល): <b>$${damlung.buyUsd.toFixed(2)}</b> (៛${damlung.buyKhr.toLocaleString('en-US')})`,
+            `• Market Sell (លក់ចេញ): <b>$${damlung.sellUsd.toFixed(2)}</b> (៛${damlung.sellKhr.toLocaleString('en-US')})`,
+            ``,
+            `🔸 <b>1 Chi (3.75g):</b>`,
+            `• Buy: <b>$${chi.buyUsd.toFixed(2)}</b> | Sell: <b>$${chi.sellUsd.toFixed(2)}</b>`,
+            `🔸 <b>1 Gram (1g):</b>`,
+            `• Buy: <b>$${gram.buyUsd.toFixed(2)}</b> | Sell: <b>$${gram.sellUsd.toFixed(2)}</b>`
+          ].join('\n');
+
+      const ok = await dispatchTelegramMessage(msg);
+      if (ok) showToast(t('toastTgKhSent'));
+    }
+
     async function sendTestTelegramAlert() {
       saveTelegramSettings(true);
       const timing = getTimingContext();
       const daySummary = getDayAnalystSummary();
+      const snap = getCambodiaGoldSnapshot();
+      const khDt = getCambodiaLiveDateTime();
+
       const msg = currentLang === 'km'
         ? [
             `🔔 <b>AUREUS GOLD TERMINAL — សាកល្បងការភ្ជាប់</b>`,
             `━━━━━━━━━━━━━━━━━━━━`,
             `✅ <b>ស្ថានភាព៖</b> បានភ្ជាប់ជោគជ័យ`,
-            `💰 <b>តម្លៃមាស XAU/USD៖</b> $${goldPrice.toFixed(2)}`,
+            `🕒 <b>ម៉ោងនៅកម្ពុជា៖</b> ${khDt.timeStr} ICT`,
+            `💰 <b>មាសសកល XAU/USD៖</b> $${goldPrice.toFixed(2)}`,
+            `🇰🇭 <b>មាសទឹក១០ (១ តម្លឹង)៖</b> ទិញ $${snap.buy24kDamlung.toFixed(0)} / លក់ $${snap.sell24kDamlung.toFixed(0)}`,
             `📊 <b>ការសម្រេចចិត្តបច្ចុប្បន្ន៖</b> ${currentSignalState.verdict}`,
             `📅 <b>តើគួរទិញថ្ងៃនេះ ឬថ្ងៃណា?៖</b> ${daySummary.shouldBuyToday ? 'អាចទិញថ្ងៃនេះបាន' : 'រង់ចាំ ' + daySummary.bestTargetKm}`,
             `⏰ <b>វគ្គទីផ្សារ៖</b> ${timing.activeSessionName}`
@@ -2615,7 +2992,9 @@
             `🔔 <b>AUREUS GOLD TERMINAL — TEST CONNECTION</b>`,
             `━━━━━━━━━━━━━━━━━━━━`,
             `✅ <b>Status:</b> Connected to Web App`,
+            `🕒 <b>Cambodia Live Time:</b> ${khDt.timeStr} ICT`,
             `💰 <b>Live XAU/USD:</b> $${goldPrice.toFixed(2)}`,
+            `🇰🇭 <b>KH 24K (1 Damlung):</b> Buy $${snap.buy24kDamlung.toFixed(0)} / Sell $${snap.sell24kDamlung.toFixed(0)}`,
             `📊 <b>Current Verdict:</b> ${currentSignalState.verdict}`,
             `📅 <b>Buy Today vs Which Day:</b> ${daySummary.shouldBuyToday ? 'Buy Today' : 'Wait for ' + daySummary.bestTargetEn}`,
             `⏰ <b>Session:</b> ${timing.activeSessionName}`
@@ -2635,8 +3014,8 @@
             `💰 <b>តម្លៃមាសផ្ទាល់៖</b> $${goldPrice.toFixed(2)}`,
             `📌 <b>ថ្ងៃនេះ (${summary.actualTodayName})៖</b> ${summary.shouldBuyToday ? '🟢 គួរទិញថ្ងៃនេះ' : '🔴 កុំទាន់ទិញថ្ងៃនេះ'} (ពិន្ទុ ${summary.todayScore}/100)`,
             `🏆 <b>ថ្ងៃល្អបំផុតសម្រាប់ទិញ៖</b> <b>${summary.bestTargetKm}</b>`,
-            `🎯 <b>តំបន់គោលដៅទិញ៖</b> <code>$3,750 – $3,762</code> (ទៀន 1H បិទលើ SMA20)`,
-            `⏰ <b>ម៉ោងចូលទិញល្អបំផុត៖</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            `🎯 <b>តំបន់គោលដៅទិញ៖</b> <code>$3,505 – $3,525</code> (ទៀន 1H បិទលើ SMA20)`,
+            `⏰ <b>ម៉ោងចូលទិញល្អបំផុត៖</b> 19:00 – 23:00 កម្ពុជា (12:00 – 16:00 UTC)`,
             ``,
             `🔍 <b>វិភាគលម្អិត (${sel.nameKm})៖</b> ${sel.descKm}`
           ].join('\n')
@@ -2646,8 +3025,8 @@
             `💰 <b>Live Spot Gold:</b> $${goldPrice.toFixed(2)}`,
             `📌 <b>Today (${summary.actualTodayName}):</b> ${summary.shouldBuyToday ? '🟢 BUY TODAY' : '🔴 WAIT / DO NOT BUY TODAY'} (Score: ${summary.todayScore}/100)`,
             `🏆 <b>Best Day to Buy:</b> <b>${summary.bestTargetEn}</b>`,
-            `🎯 <b>Target Buy Zone:</b> <code>$3,750 – $3,762</code> (Trigger: 1H Close > SMA20)`,
-            `⏰ <b>Prime Entry Window:</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            `🎯 <b>Target Buy Zone:</b> <code>$3,505 – $3,525</code> (Trigger: 1H Close > SMA20)`,
+            `⏰ <b>Prime Entry Window:</b> 19:00 – 23:00 Cambodia / 12:00 – 16:00 UTC`,
             ``,
             `🔍 <b>Selected Day (${sel.nameEn} · ${sel.winRate} Win Rate):</b> ${sel.descEn}`
           ].join('\n');
@@ -2658,13 +3037,14 @@
 
     async function sendSignalReportToTelegram(isAuto = false) {
       const entry = parseFloat(document.getElementById('calcEntry').value) || goldPrice;
-      const sl = parseFloat(document.getElementById('calcSL').value) || (goldPrice - 16.5);
-      const tp = parseFloat(document.getElementById('calcTP').value) || (goldPrice + 42.0);
+      const sl = parseFloat(document.getElementById('calcSL').value) || (goldPrice - 18.0);
+      const tp = parseFloat(document.getElementById('calcTP').value) || (goldPrice + 46.0);
       const lots = document.getElementById('resLots').textContent;
       const rr = document.getElementById('resRR').textContent;
       const includeTiming = document.getElementById('tgIncludeTiming').checked;
       const timing = getTimingContext();
       const daySummary = getDayAnalystSummary();
+      const snap = getCambodiaGoldSnapshot();
 
       const verdictEmoji = currentSignalState.actionCode === 'BUY' ? '🟢' : (currentSignalState.actionCode === 'CAUTION' ? '🟡' : '🔴');
 
@@ -2672,7 +3052,8 @@
         ? [
             `${isAuto ? '🚨 <b>ការជូនដំណឹងផ្លាស់ប្តូរសញ្ញាស្វ័យប្រវត្តិ</b>' : '📊 <b>របាយការណ៍វិភាគហានិភ័យមាស XAU/USD</b>'}`,
             `━━━━━━━━━━━━━━━━━━━━`,
-            `💰 <b>តម្លៃមាសផ្ទាល់៖</b> $${goldPrice.toFixed(2)}`,
+            `💰 <b>តម្លៃមាសសកល៖</b> $${goldPrice.toFixed(2)}`,
+            `🇰🇭 <b>មាសទឹក១០ (១ តម្លឹង)៖</b> ទិញ $${snap.buy24kDamlung.toFixed(0)} | លក់ $${snap.sell24kDamlung.toFixed(0)}`,
             `${verdictEmoji} <b>តើគួរទិញឬអត់?៖</b> <b>${currentSignalState.verdict}</b>`,
             `⚠️ <b>ហានិភ័យ៖</b> ${currentSignalState.riskLevel} (ទំនុកចិត្ត៖ ${currentSignalState.confidence}%)`,
             `📈 <b>សូចនាករ៖</b> និន្នាការ ${currentSignalState.maAlignment} | RSI(14): ${currentSignalState.rsi}`,
@@ -2687,6 +3068,7 @@
             `${isAuto ? '🚨 <b>AUTO SIGNAL CHANGE ALERT</b>' : '📊 <b>XAU/USD GOLD RISK &amp; ENTRY REPORT</b>'}`,
             `━━━━━━━━━━━━━━━━━━━━`,
             `💰 <b>Spot Gold Price:</b> $${goldPrice.toFixed(2)}`,
+            `🇰🇭 <b>Cambodia 24K (1 Damlung):</b> Buy $${snap.buy24kDamlung.toFixed(0)} | Sell $${snap.sell24kDamlung.toFixed(0)}`,
             `${verdictEmoji} <b>Should You Buy?:</b> <b>${currentSignalState.verdict}</b>`,
             `⚠️ <b>Volatility Risk:</b> ${currentSignalState.riskLevel} (Confidence: ${currentSignalState.confidence}%)`,
             `📈 <b>Indicators:</b> ${currentSignalState.maAlignment} Trend | RSI(14): ${currentSignalState.rsi}`,
@@ -2705,7 +3087,7 @@
             `⏰ <b>ការណែនាំថ្ងៃ និងម៉ោងទិញ៖</b>`,
             `• ថ្ងៃនេះ៖ ${timing.currentDayName} (${timing.activeSessionName})`,
             `• ថ្ងៃល្អបំផុត៖ <b>${daySummary.bestTargetKm}</b>`,
-            `• ម៉ោងមាស៖ <b>12:00 – 16:00 UTC</b> (London–NY Overlap)`
+            `• ម៉ោងមាស៖ <b>19:00 – 23:00 កម្ពុជា</b> (12:00 – 16:00 UTC)`
           );
         } else {
           lines.push(
@@ -2713,7 +3095,7 @@
             `⏰ <b>Market Timing &amp; Day Advisor:</b>`,
             `• Now: ${timing.currentDayName} (${timing.activeSessionName})`,
             `• Best Day to Buy: <b>${daySummary.bestTargetEn}</b>`,
-            `• Prime Entry Window: <b>12:00 – 16:00 UTC</b> (London–NY Overlap)`
+            `• Prime Entry Window: <b>19:00 – 23:00 Cambodia</b> (12:00 – 16:00 UTC)`
           );
         }
       }
@@ -2724,17 +3106,18 @@
 
     async function sendTimingBriefingToTelegram() {
       const timing = getTimingContext();
+      const khDt = getCambodiaLiveDateTime();
       const msg = currentLang === 'km'
         ? [
             `🗓 <b>កាលវិភាគថ្ងៃ និងម៉ោងជួញដូរមាស (XAU/USD)</b>`,
             `━━━━━━━━━━━━━━━━━━━━`,
-            `🕒 <b>ម៉ោងសកល UTC៖</b> ${String(timing.utcH).padStart(2, '0')}:${String(timing.utcM).padStart(2, '0')} UTC (${timing.currentDayName})`,
+            `🇰🇭 <b>ម៉ោងនៅកម្ពុជា៖</b> ${khDt.timeStr} ICT (${timing.currentDayName})`,
             `🌐 <b>វគ្គទីផ្សារបច្ចុប្បន្ន៖</b> ${timing.activeSessionName}`,
             `📌 <b>ការណែនាំ៖</b> ${timing.sessionAdvice}`,
             ``,
             `🏆 <b>ពេលវេលាល្អបំផុតដើម្បីចូលទីផ្សារ៖</b>`,
             `• <b>ថ្ងៃល្អបំផុត៖</b> ថ្ងៃអង្គារ, ថ្ងៃពុធ, ថ្ងៃព្រហស្បតិ៍`,
-            `• <b>ម៉ោងមាស៖</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            `• <b>ម៉ោងមាស៖</b> 19:00 – 23:00 កម្ពុជា (12:00 – 16:00 UTC)`,
             `• <b>គួរជៀសវាង៖</b> ព្រឹកថ្ងៃច័ន្ទ និងល្ងាចថ្ងៃសុក្រ`,
             ``,
             `💰 <b>តម្លៃមាសបច្ចុប្បន្ន៖</b> $${goldPrice.toFixed(2)} (${currentSignalState.verdict})`
@@ -2742,13 +3125,13 @@
         : [
             `🗓 <b>GOLD (XAU/USD) TIMING &amp; SESSION BRIEFING</b>`,
             `━━━━━━━━━━━━━━━━━━━━`,
-            `🕒 <b>Current UTC:</b> ${String(timing.utcH).padStart(2, '0')}:${String(timing.utcM).padStart(2, '0')} UTC (${timing.currentDayName})`,
+            `🇰🇭 <b>Cambodia Live Time:</b> ${khDt.timeStr} ICT (${timing.currentDayName})`,
             `🌐 <b>Active Session:</b> ${timing.activeSessionName}`,
             `📌 <b>Current Advice:</b> ${timing.sessionAdvice}`,
             ``,
             `🏆 <b>Optimal Schedule to Join Market:</b>`,
             `• <b>Best Days:</b> Tuesday, Wednesday, Thursday`,
-            `• <b>Prime Hours:</b> 12:00 – 16:00 UTC (London–NY Overlap)`,
+            `• <b>Prime Hours:</b> 19:00 – 23:00 Cambodia (12:00 – 16:00 UTC)`,
             `• <b>Avoid:</b> Monday early chop &amp; Friday late profit-taking`,
             ``,
             `💰 <b>Live Gold:</b> $${goldPrice.toFixed(2)} (${currentSignalState.verdict})`
@@ -2766,6 +3149,7 @@
       loadTelegramSettings();
       setLanguage(currentLang);
       resizeCanvas();
+      renderCambodiaMarket();
       renderWatchlist();
       calculateRisk();
       evaluateMarketSignal();
